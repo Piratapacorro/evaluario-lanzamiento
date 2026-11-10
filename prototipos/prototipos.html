@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluario · Prototipos de Interfaz de Usuario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05070a;
+      --surface: #0b0f17;
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f3f6fc;
+      --muted: #94a3b8;
+      --emerald: #10b981;
+      --cyan: #06b6d4;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+    .container { max-width: 1040px; margin: 0 auto; }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    a.back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--emerald);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      margin-bottom: 0.6rem;
+    }
+    .subtitle { color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; }
+    .proto-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-bottom: 2.2rem;
+    }
+    .proto-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      color: var(--emerald);
+      margin-bottom: 0.45rem;
+    }
+    .proto-card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.2rem; }
+    .proto-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <a href="../index.html" class="back-btn">← Volver a la Landing Page de Evaluario</a>
+    </div>
+
+    <h1>Prototipos de Interfaz de Usuario</h1>
+    <p class="subtitle">Vistas principales de la aplicación web Evaluario para pre-corrección de prácticas de Redes y Bases de Datos.</p>
+
+    <div class="proto-card">
+      <h2>1. Panel Principal y Hoja de Lectura Óptica de Tarea</h2>
+      <p>Cada fila representa un alumno y cada columna un punto comprobado en las capturas del PDF. Las burbujas indican visualmente qué se ha verificado, qué falta y qué requiere revisión docente.</p>
+      <img src="1-panel-principal.png" alt="Panel Principal de Evaluario">
+    </div>
+
+    <div class="proto-card">
+      <h2>2. Inspección Detallada por Alumno y Visor de Evidencias</h2>
+      <p>Al seleccionar un alumno, el profesor visualiza la página exacta del PDF donde se encontró cada dato, la propuesta de nota y su casilla de decisión final.</p>
+      <img src="2-hoja-correccion-alumno.png" alt="Detalle de Alumno">
+    </div>
+
+    <div class="proto-card">
+      <h2>3. Editor Visual de Listas de Comprobación</h2>
+      <p>Permite crear o modificar los puntos a buscar en las capturas (direcciones IP con el número del alumno, órdenes y salidas de configuración) y probarlos en directo sobre una memoria ya leída.</p>
+      <img src="3-editor-comprobaciones.png" alt="Editor de Listas">
+    </div>
+  </div>
+</body>
+</html>

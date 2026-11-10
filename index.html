@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluario · Ingeniería de Pre-Corrección Local para FP</title>
+  <meta name="description" content="Plataforma de pre-corrección determinista de memorias de Redes y scripts SQL para profesorado de Formación Profesional. 100% local, sin IA en la nube y a coste cero.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #05070a;
+      --bg-surface: #0b0f17;
+      --bg-elevated: #111724;
+      --bg-glass: rgba(14, 20, 32, 0.72);
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --border-highlight: rgba(16, 185, 129, 0.45);
+      --text-main: #f3f6fc;
+      --text-secondary: #94a3b8;
+      --text-DIM: #64748b;
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.22);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.22);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.2);
+      --rose: #f43f5e;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      selection-background-color: var(--emerald);
+    }
+
+    ::selection {
+      background: rgba(16, 185, 129, 0.3);
+      color: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      overflow-x: hidden;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    /* Fondo interactivo de ingeniería y partículas */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.65;
+    }
+
+    .ambient-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(130px);
+      pointer-events: none;
+      z-index: 0;
+      transition: transform 0.8s var(--ease-out-expo);
+    }
+
+    .orb-1 {
+      width: 580px;
+      height: 580px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.13) 0%, transparent 70%);
+      top: -180px;
+      left: -120px;
+    }
+
+    .orb-2 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.11) 0%, transparent 70%);
+      top: 25%;
+      right: -160px;
+    }
+
+    .orb-3 {
+      width: 640px;
+      height: 640px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.07) 0%, transparent 70%);
+      bottom: -200px;
+      left: 25%;
+    }
+
+    /* Barra superior de telemetría */
+    .telemetry-bar {
+      position: relative;
+      z-index: 30;
+      background: rgba(8, 12, 19, 0.9);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.45rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .telemetry-group {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--emerald);
+      font-weight: 600;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+
+    /* Navegación flotante */
+    header.navbar-wrapper {
+      position: sticky;
+      top: 14px;
+      z-index: 50;
+      padding: 0 1.25rem;
+      margin-top: 14px;
+    }
+
+    nav.navbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      background: rgba(11, 15, 23, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 0.75rem 1.35rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid var(--emerald);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
+      transform: translateX(-100%);
+      animation: laserSweep 3.6s infinite;
+    }
+
+    @keyframes laserSweep {
+      0% { transform: translateX(-100%); }
+      50%, 100% { transform: translateX(100%); }
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.6rem 1.15rem;
+      border-radius: 9px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out-expo);
+      border: 1px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      border-color: var(--border-strong);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--cyan);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #03110b;
+      font-weight: 700;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.55);
+      filter: brightness(1.06);
+    }
+
+    /* Contenedor general */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* HERO PRINCIPAL */
+    .hero {
+      padding: 4.5rem 0 3.5rem;
+      text-align: center;
+    }
+
+    .launch-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.32);
+      padding: 0.38rem 0.95rem 0.38rem 0.5rem;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-main);
+      margin-bottom: 1.6rem;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.12);
+    }
+
+    .launch-pill-badge {
+      background: var(--emerald);
+      color: #04130d;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.4vw, 4.35rem);
+      font-weight: 700;
+      line-height: 1.07;
+      letter-spacing: -0.035em;
+      max-width: 960px;
+      margin: 0 auto 1.35rem;
+    }
+
+    .gradient-word {
+      background: linear-gradient(90deg, #34d399 0%, #22d3ee 55%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+      color: var(--text-secondary);
+      max-width: 740px;
+      margin: 0 auto 2.2rem;
+      font-weight: 400;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn-lg {
+      padding: 0.9rem 1.75rem;
+      font-size: 0.98rem;
+      border-radius: 11px;
+    }
+
+    /* ESTACIÓN DE SIMULACIÓN EN VIVO (HERO WORKBENCH) */
+    .workbench {
+      background: linear-gradient(180deg, rgba(17, 23, 36, 0.92) 0%, rgba(9, 13, 22, 0.96) 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(16, 185, 129, 0.12);
+      overflow: hidden;
+      text-align: left;
+      margin-bottom: 4.5rem;
+      position: relative;
+    }
+
+    .workbench-header {
+      background: rgba(6, 9, 15, 0.9);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .win-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .win-dot.red { background: #ef4444; }
+    .win-dot.amber { background: #f59e0b; }
+    .win-dot.green { background: #10b981; }
+
+    .workbench-tabs {
+      display: flex;
+      gap: 0.45rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.28rem;
+      border-radius: 9px;
+      border: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+
+    .wb-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .wb-tab.active {
+      background: var(--emerald);
+      color: #03120c;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
+    }
+
+    .wb-tab:not(.active):hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .workbench-status {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .wb-panel {
+      display: none;
+      padding: 1.6rem;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .wb-panel.active {
+      display: grid;
+      animation: fadeSlideIn 0.35s var(--ease-out-expo);
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Panel Izquierdo: Terminal / Captura simulada con haz láser OCR */
+    .terminal-box {
+      background: #05070b;
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .ocr-laser {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 46px;
+      background: linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.18) 85%, rgba(16, 185, 129, 0.85) 100%);
+      border-bottom: 2px solid var(--emerald);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.45);
+      pointer-events: none;
+      animation: scanVertical 4.2s ease-in-out infinite;
+      z-index: 4;
+    }
+
+    @keyframes scanVertical {
+      0% { top: -46px; opacity: 0; }
+      10% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    .term-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.65rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      color: var(--text-DIM);
+      font-size: 0.72rem;
+    }
+
+    .term-code {
+      line-height: 1.7;
+      color: #cbd5e1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hl-match {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      padding: 0.08rem 0.35rem;
+      border-radius: 4px;
+      font-weight: 600;
+      display: inline-block;
+      transition: all 0.25s;
+    }
+
+    .hl-warn {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      padding: 0.08rem 0.35rem;
+      border-radius: 4px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .term-controls {
+      margin-top: 1.1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      padding: 0.38rem 0.7rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn:hover, .chip-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+
+    /* Panel Derecho: Matriz de Evaluación Interactiva */
+    .eval-matrix {
+      background: rgba(8, 12, 20, 0.85);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .matrix-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .matrix-title {
+      font-family: var(--font-display);
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .score-badge {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.25rem 0.75rem;
+      border-radius: 8px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .check-row:hover {
+      border-color: var(--border-strong);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .check-info {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.84rem;
+    }
+
+    .state-bubble {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: transform 0.2s var(--ease-out-expo);
+    }
+
+    .state-bubble.ok {
+      background: var(--emerald);
+      color: #03120c;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+    }
+
+    .state-bubble.review {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber);
+      border: 2px dashed var(--amber);
+    }
+
+    .state-bubble.miss {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--rose);
+      border: 1.5px solid var(--rose);
+    }
+
+    .check-weight {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+    }
+
+    .matrix-footer {
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.8rem;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.09);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      font-size: 0.78rem;
+      color: #fcd34d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* CINTA DE ESPECIFICACIONES EN MOVIMIENTO (TICKER) */
+    .ticker-wrap {
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(8, 11, 18, 0.8);
+      overflow: hidden;
+      padding: 0.9rem 0;
+      margin-bottom: 5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: scrollTicker 32s linear infinite;
+      gap: 3rem;
+    }
+
+    .ticker-item {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      white-space: nowrap;
+    }
+
+    .ticker-item strong {
+      color: var(--text-main);
+    }
+
+    @keyframes scrollTicker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ENCABEZADOS DE SECCIÓN */
+    .section-head {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 3.2rem;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--emerald);
+      margin-bottom: 0.6rem;
+      display: inline-block;
+    }
+
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.85rem, 3.6vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.85rem;
+    }
+
+    .section-head p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    /* TARJETAS SPOTLIGHT 3D (BENTO GRID) */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.35rem;
+      margin-bottom: 5.5rem;
+    }
+
+    .bento-card {
+      grid-column: span 4;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      padding: 1.85rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.28s var(--ease-out-expo), border-color 0.28s;
+    }
+
+    .bento-card.span-6 { grid-column: span 6; }
+    .bento-card.span-8 { grid-column: span 8; }
+
+    .bento-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(16, 185, 129, 0.11), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .bento-card:hover::before {
+      opacity: 1;
+    }
+
+    .bento-card:hover {
+      border-color: rgba(16, 185, 129, 0.45);
+      transform: translateY(-4px);
+    }
+
+    .card-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.55rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .bento-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.32rem;
+      margin-bottom: 0.65rem;
+      color: var(--text-main);
+    }
+
+    .bento-card p {
+      color: var(--text-secondary);
+      font-size: 0.94rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: grid;
+      gap: 0.48rem;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .feature-list li::before {
+      content: "▸";
+      color: var(--emerald);
+      font-family: var(--font-mono);
+      font-weight: bold;
+    }
+
+    /* CALCULADORA INTERACTIVA DE AHORRO DOCENTE */
+    .calc-panel {
+      background: linear-gradient(135deg, rgba(14, 21, 35, 0.95), rgba(8, 12, 20, 0.98));
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 2.4rem;
+      margin-bottom: 5.5rem;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .slider-group {
+      margin-bottom: 1.4rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.92rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .slider-val {
+      font-family: var(--font-mono);
+      color: var(--emerald);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--emerald);
+      height: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .calc-results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .calc-box {
+      background: rgba(5, 7, 10, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .calc-box.highlight {
+      grid-column: span 2;
+      border-color: rgba(16, 185, 129, 0.45);
+      background: rgba(16, 185, 129, 0.07);
+    }
+
+    .calc-number {
+      font-family: var(--font-mono);
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--emerald);
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+
+    .calc-caption {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+    }
+
+    /* DIAGRAMA INTERACTIVO DE ARQUITECTURA E INFRAESTRUCTURA */
+    .arch-explorer {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 2rem;
+      margin-bottom: 5.5rem;
+    }
+
+    .arch-nodes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .arch-node {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 1.15rem;
+      cursor: pointer;
+      transition: all 0.22s;
+      text-align: left;
+    }
+
+    .arch-node.active, .arch-node:hover {
+      border-color: var(--cyan);
+      background: rgba(6, 182, 212, 0.09);
+      transform: translateY(-2px);
+    }
+
+    .arch-node-id {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      margin-bottom: 0.35rem;
+    }
+
+    .arch-node-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .arch-node-tech {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .arch-detail-box {
+      background: #060910;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .arch-code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: #030508;
+      border: 1px solid var(--border-subtle);
+      padding: 1rem;
+      border-radius: 8px;
+      color: #a7f3d0;
+      overflow-x: auto;
+    }
+
+    /* HOJA DE RUTA / PLANIFICACIÓN (JIRA) */
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.15rem;
+      margin-bottom: 5.5rem;
+    }
+
+    .phase-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 13px;
+      padding: 1.35rem;
+      position: relative;
+    }
+
+    .phase-card.done { border-top: 3px solid var(--emerald); }
+    .phase-card.current { border-top: 3px solid var(--cyan); box-shadow: 0 0 25px rgba(6, 182, 212, 0.12); }
+    .phase-card.upcoming { border-top: 3px solid var(--amber); }
+
+    .phase-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      margin-bottom: 0.55rem;
+      color: var(--text-secondary);
+    }
+
+    .phase-card h4 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .phase-card p {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+    }
+
+    /* SECCIÓN DE LISTA DE ESPERA POR CORREO (LANZAMIENTO MAYO 2027) */
+    .waitlist-section {
+      background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 55%),
+                  linear-gradient(180deg, #0d1422 0%, #070a12 100%);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 22px;
+      padding: 3.2rem 2rem;
+      text-align: center;
+      margin-bottom: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .waitlist-form-box {
+      max-width: 620px;
+      margin: 1.8rem auto 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75rem;
+    }
+
+    .email-input {
+      background: rgba(5, 7, 10, 0.9);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 0.95rem 1.2rem;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 0.96rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .email-input:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .pass-ticket {
+      display: none;
+      max-width: 540px;
+      margin: 1.6rem auto 0;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px dashed var(--emerald);
+      border-radius: 12px;
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      text-align: left;
+      color: #d1fae5;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 3rem 1.5rem 4rem;
+      background: #040609;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--emerald);
+    }
+
+    /* Animación de entrada por scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s var(--ease-out-expo), transform 0.65s var(--ease-out-expo);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 960px) {
+      .wb-panel.active { grid-template-columns: 1fr; }
+      .bento-card, .bento-card.span-6, .bento-card.span-8 { grid-column: span 12; }
+      .calc-panel { grid-template-columns: 1fr; }
+      .arch-nodes { grid-template-columns: 1fr 1fr; }
+      .arch-detail-box { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .waitlist-form-box { grid-template-columns: 1fr; }
+      .arch-nodes { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Red de nodos interactiva de fondo -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+  <div class="ambient-orb orb-3"></div>
+
+  <!-- Barra de telemetría en vivo -->
+  <div class="telemetry-bar">
+    <div class="telemetry-group">
+      <span class="status-indicator"><span class="pulse-dot"></span> MOTOR DETERMINISTA v0.20 ACTIVO</span>
+      <span>CSP: connect-src 'none' (0 BYTES ENVIADOS A LA NUBE)</span>
+      <span>TESTS: 190/190 EN VERDE (VITEST + PYTEST)</span>
+    </div>
+    <div class="telemetry-group">
+      <span>PROYECTO INTERMODULAR ASIR · I.E.S. TRIANA</span>
+    </div>
+  </div>
+
+  <!-- Navegación principal -->
+  <header class="navbar-wrapper">
+    <nav class="navbar">
+      <a href="#" class="brand">
+        <div class="brand-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <circle cx="12" cy="12" r="4" fill="#10b981"></circle>
+          </svg>
+        </div>
+        <span class="brand-name">Evaluario</span>
+        <span class="brand-tag">LOCAL-FIRST</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#simulador">Simulador en Vivo</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#calculadora">Ahorro Docente</a>
+        <a href="#arquitectura">Arquitectura</a>
+        <a href="#planificacion">Planificación</a>
+      </div>
+
+      <div class="nav-actions">
+        <a href="https://evaluario.atlassian.net" target="_blank" rel="noopener" class="btn btn-ghost">Tablero Jira</a>
+        <a href="#lanzamiento" class="btn btn-primary">Lista de Espera 2027</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="launch-pill">
+        <span class="launch-pill-badge">MAYO 2027</span>
+        <span>Lanzamiento comercial para centros y docentes de FP de Informática</span>
+      </div>
+
+      <h1>
+        Pre-corrección técnica de Redes y SQL <span class="gradient-word">sin subir ni un dato a la nube</span>
+      </h1>
+
+      <p class="hero-lead">
+        Evaluario lee memorias PDF con capturas de VirtualBox mediante OCR en WebAssembly y evalúa prácticas SQL en un contenedor MySQL en memoria RAM. Propone un borrador auditable al instante y el profesor decide siempre la nota final.
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="#lanzamiento" class="btn btn-primary btn-lg">
+          Reservar plaza para el lanzamiento →
+        </a>
+        <a href="https://github.com/Piratapacorro/evaluario-lanzamiento" id="repo-btn-hero" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">
+          Explorar Repositorio en GitHub
+        </a>
+        <a href="https://evaluario.atlassian.net" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">
+          Ver Planificación en Jira (EVA)
+        </a>
+      </div>
+
+      <!-- ESTACIÓN INTERACTIVA EN VIVO -->
+      <div class="workbench" id="simulador">
+        <div class="workbench-header">
+          <div class="window-controls">
+            <span class="win-dot red"></span>
+            <span class="win-dot amber"></span>
+            <span class="win-dot green"></span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-left: 0.5rem;">
+              evaluario-engine://inspector-interactivo
+            </span>
+          </div>
+
+          <div class="workbench-tabs" role="tablist">
+            <button class="wb-tab active" onclick="switchWorkbench(0)" id="tab-btn-0">
+              01 · OCR Memorias de Redes (DHCP)
+            </button>
+            <button class="wb-tab" onclick="switchWorkbench(1)" id="tab-btn-1">
+              02 · Sandbox MySQL en RAM (.SQL)
+            </button>
+            <button class="wb-tab" onclick="switchWorkbench(2)" id="tab-btn-2">
+              03 · Radar Anti-Copia (Huellas MAC)
+            </button>
+          </div>
+
+          <div class="workbench-status" id="wb-status-text">
+            ● Escáner WASM listo · 0 conexiones externas
+          </div>
+        </div>
+
+        <!-- MODO 0: REDES Y CAPTURAS DHCP -->
+        <div class="wb-panel active" id="wb-panel-0">
+          <div class="terminal-box">
+            <div class="ocr-laser"></div>
+            <div>
+              <div class="term-top">
+                <span>CAPTURA EXTRAÍDA: Alumno_07_Practica4_DHCP.pdf (Pág. 6)</span>
+                <span style="color: var(--emerald);">Escalado OCR: 30px · Confianza: 94%</span>
+              </div>
+              <div class="term-code" id="dhcp-term-content">
+                <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
+                <div>ddns-update-style none;</div>
+                <div>default-lease-time <span class="hl-match">3600</span>; max-lease-time 7200;</div>
+                <div>authoritative;</div>
+                <div>subnet <span class="hl-match">192.168.107.0</span> netmask <span class="hl-match">255.255.255.0</span> {</div>
+                <div>&nbsp;&nbsp;range <span class="hl-match">192.168.107.50 192.168.107.150</span>;</div>
+                <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.107.1</span>;</div>
+                <div>&nbsp;&nbsp;option domain-name-servers <span class="hl-warn">8.8.4.4</span>;</div>
+                <div>}</div>
+                <div style="margin-top:0.45rem;">root@cliente-vb:~# <span style="color:#38bdf8;">ip -4 a show enp0s8</span></div>
+                <div>inet <span class="hl-match">192.168.107.51/24</span> brd 192.168.107.255 scope global dynamic</div>
+              </div>
+            </div>
+
+            <div class="term-controls">
+              <span style="font-size:0.72rem; color:var(--text-DIM); align-self:center; margin-right:0.3rem;">PROBAR ESCENARIO:</span>
+              <button class="chip-btn active" onclick="loadDhcpScenario('ok', this)">Entrega Correcta (Alumno 07)</button>
+              <button class="chip-btn" onclick="loadDhcpScenario('duda', this)">Captura Borrosa / Dudosa</button>
+              <button class="chip-btn" onclick="loadDhcpScenario('fallo', this)">Rango IP Incorrecto</button>
+            </div>
+          </div>
+
+          <div class="eval-matrix">
+            <div>
+              <div class="matrix-header">
+                <div>
+                  <div class="matrix-title">Hoja de Lectura Óptica · Práctica 4 DHCP</div>
+                  <div style="font-size: 0.76rem; color: var(--text-secondary);">Haz clic en cualquier punto para alternar la decisión del profesor</div>
+                </div>
+                <div class="score-badge" id="dhcp-score">8,5 / 10</div>
+              </div>
+
+              <div id="dhcp-checks-container">
+                <div class="check-row" onclick="toggleCheckRow(this, 2.5)">
+                  <div class="check-info">
+                    <span class="state-bubble ok">✓</span>
+                    <span>Subred <code>192.168.XX.0/24</code> con número del alumno (07)</span>
+                  </div>
+                  <span class="check-weight">2,5 pts · Pág. 6</span>
+                </div>
+
+                <div class="check-row" onclick="toggleCheckRow(this, 2.5)">
+                  <div class="check-info">
+                    <span class="state-bubble ok">✓</span>
+                    <span>Rango de concesión <code>.50</code> a <code>.150</code> activo en <code>dhcpd.conf</code></span>
+                  </div>
+                  <span class="check-weight">2,5 pts · Pág. 6</span>
+                </div>
+
+                <div class="check-row" onclick="toggleCheckRow(this, 2.0)">
+                  <div class="check-info">
+                    <span class="state-bubble ok">✓</span>
+                    <span>Puerta de enlace <code>option routers 192.168.107.1</code></span>
+                  </div>
+                  <span class="check-weight">2,0 pts · Pág. 6</span>
+                </div>
+
+                <div class="check-row" onclick="toggleCheckRow(this, 1.5)" data-state="review">
+                  <div class="check-info">
+                    <span class="state-bubble review">?</span>
+                    <span>Servidor DNS interno del aula (detectado <code>8.8.4.4</code>)</span>
+                  </div>
+                  <span class="check-weight">1,5 pts · Por revisar</span>
+                </div>
+
+                <div class="check-row" onclick="toggleCheckRow(this, 1.5)">
+                  <div class="check-info">
+                    <span class="state-bubble ok">✓</span>
+                    <span>Cliente recibe concesión dinámica en interfaz <code>enp0s8</code></span>
+                  </div>
+                  <span class="check-weight">1,5 pts · Pág. 6</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="matrix-footer">
+              <span>⚡ Borrador generado en 1,4 s sin conexión a internet</span>
+              <span style="font-family:var(--font-mono); font-weight:700;">DECIDE EL PROFESOR</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODO 1: SANDBOX MYSQL EN RAM -->
+        <div class="wb-panel" id="wb-panel-1">
+          <div class="terminal-box">
+            <div>
+              <div class="term-top">
+                <span>SANDBOX DOCKER: mysql:8.4 (127.0.0.1:3307 · tmpfs RAM 768M)</span>
+                <span style="color: var(--cyan);">--max-execution-time=5000</span>
+              </div>
+              <div class="term-code" id="sql-term-content">
+                <div style="color:#94a3b8;">-- Entrega: Alumno14.sql · Ejercicio 3 (SELECT)</div>
+                <div><span style="color:#38bdf8;">SELECT</span> p.nombre, p.precio, f.nombre <span style="color:#38bdf8;">AS</span> fabricante</div>
+                <div><span style="color:#38bdf8;">FROM</span> productos p</div>
+                <div><span style="color:#38bdf8;">JOIN</span> fabricantes f <span style="color:#38bdf8;">ON</span> p.id_fabricante = f.id</div>
+                <div><span style="color:#38bdf8;">WHERE</span> p.precio <span class="hl-warn">&gt; 100</span>; <span style="color:#f59e0b;">-- Enunciado pedía &gt;= 100</span></div>
+                <div style="margin-top:0.6rem; color:#34d399;">[MOTOR] Filas con datos.sql del enunciado: COINCIDE (3 filas)</div>
+                <div style="color:#fbbf24;">[DATOS_EXTRA] Probando fila límite inventada (precio = 100.00 €)...</div>
+                <div style="color:#f43f5e;">[ALERTA] Falla con datos_extra.sql: acertaba por casualidad.</div>
+              </div>
+            </div>
+
+            <div class="term-controls">
+              <span style="font-size:0.72rem; color:var(--text-DIM); align-self:center; margin-right:0.3rem;">SIMULAR CASO:</span>
+              <button class="chip-btn active" onclick="loadSqlScenario('casualidad', this)">Acierta por casualidad (&gt; vs &gt;=)</button>
+              <button class="chip-btn" onclick="loadSqlScenario('sinorden', this)">Olvida ORDER BY (8 alumnos)</button>
+              <button class="chip-btn" onclick="loadSqlScenario('hostil', this)">Intento LOAD DATA INFILE (Bloqueado)</button>
+            </div>
+          </div>
+
+          <div class="eval-matrix">
+            <div>
+              <div class="matrix-header">
+                <div>
+                  <div class="matrix-title">Calibración por Grupos de Fallo Idéntico</div>
+                  <div style="font-size: 0.76rem; color: var(--text-secondary);">Responde una sola vez y calibra a toda la clase en <code>rubrica.toml</code></div>
+                </div>
+                <div class="score-badge" id="sql-score">Calibrado</div>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble ok">✓</span>
+                  <span>Esquema DDL: Tablas, PK, FK, UNIQUE y tipos compatibles</span>
+                </div>
+                <span class="check-weight">100% verificado</span>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble review">!</span>
+                  <span>Fallo <code>datos.casualidad</code> (4 alumnos coinciden en este fallo)</span>
+                </div>
+                <span class="check-weight">50% provisional</span>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble review">!</span>
+                  <span>Fallo <code>select.sin_orden</code> (8 alumnos sin cláusula ORDER BY)</span>
+                </div>
+                <span class="check-weight">75% en rúbrica</span>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble ok">✓</span>
+                  <span>Aislamiento DML: Cada ejercicio parte del estado limpio canónico</span>
+                </div>
+                <span class="check-weight">tmpfs RAM</span>
+              </div>
+            </div>
+
+            <div class="matrix-footer">
+              <span>🛡️ Código hostil confinado: <code>--secure-file-priv=NULL</code></span>
+              <span style="font-family:var(--font-mono); font-weight:700;">96 TESTS PYTEST</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODO 2: RADAR ANTI-COPIA -->
+        <div class="wb-panel" id="wb-panel-2">
+          <div class="terminal-box">
+            <div>
+              <div class="term-top">
+                <span>ANÁLISIS CRUZADO DE HUELLAS DE MÁQUINA (D-045)</span>
+                <span style="color: var(--amber);">Umbral superado: Peso 4 ≥ 3</span>
+              </div>
+              <div class="term-code">
+                <div style="color:#94a3b8;"># Comparando texto OCR de toda la clase (24 entregas)...</div>
+                <div>• Descartado <code>10.0.2.15</code> (19 alumnos · NAT por defecto VirtualBox)</div>
+                <div>• Descartado <code>08:00:27</code> prefijo OUI común de VirtualBox</div>
+                <div style="margin-top:0.55rem; color:#fbbf24;">⚠ COINCIDENCIA EXCLUSIVA DETECTADA (Solo en 2 entregas):</div>
+                <div>&nbsp;&nbsp;├─ Entrega A: <span class="hl-warn">Alumno_04.pdf (Pág. 9)</span></div>
+                <div>&nbsp;&nbsp;├─ Entrega B: <span class="hl-warn">Alumno_19.pdf (Pág. 11)</span></div>
+                <div>&nbsp;&nbsp;├─ MAC exacta: <span class="hl-match">08:00:27:c4:91:e2</span> (+2 pts)</div>
+                <div>&nbsp;&nbsp;└─ Hora exacta: <span class="hl-match">18:42:53</span> (+2 pts)</div>
+              </div>
+            </div>
+            <div class="term-controls">
+              <span style="font-size:0.74rem; color:var(--text-secondary);">
+                Regla D-008: Es un indicio privado para revisión docente, nunca una sanción automática.
+              </span>
+            </div>
+          </div>
+
+          <div class="eval-matrix">
+            <div>
+              <div class="matrix-header">
+                <div>
+                  <div class="matrix-title">Por qué no comparamos imágenes píxel a píxel</div>
+                  <div style="font-size: 0.76rem; color: var(--text-secondary);">Ingeniería pensada para aulas de virtualización</div>
+                </div>
+                <div class="score-badge" style="color:var(--amber); border-color:var(--amber);">Indicio</div>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble ok">1</span>
+                  <span>Cero falsos positivos por usar la misma plantilla OVA del profesor</span>
+                </div>
+                <span class="check-weight">Filtro inteligente</span>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble ok">2</span>
+                  <span>Inmune a recortes, cambios de brillo o capturas re-escaladas</span>
+                </div>
+                <span class="check-weight">Huella en texto</span>
+              </div>
+
+              <div class="check-row">
+                <div class="check-info">
+                  <span class="state-bubble ok">3</span>
+                  <span>Botón directo «Ver al otro alumno» para inspección lado a lado</span>
+                </div>
+                <span class="check-weight">1 clic</span>
+              </div>
+            </div>
+
+            <div class="matrix-footer">
+              <span>🔍 Cumple estrictamente el Anexo III del EU AI Act</span>
+              <span style="font-family:var(--font-mono); font-weight:700;">SUPERVISIÓN HUMANA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cinta continua de ingeniería -->
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <div class="ticker-item">⚡ <strong>SINGLE-FILE HTML</strong> · Funciona sin servidor y sin internet</div>
+      <div class="ticker-item">🔒 <strong>CSP CONNECT-SRC 'NONE'</strong> · Bloqueo físico de salida de datos</div>
+      <div class="ticker-item">🐳 <strong>MYSQL 8.4 EN RAM (TMPFS)</strong> · Limpieza instantánea tras cada alumno</div>
+      <div class="ticker-item">👁️ <strong>TESSERACT WASM SIMD</strong> · Preprocesado a 30px para terminales oscuras</div>
+      <div class="ticker-item">🔑 <strong>AES-256-GCM + PBKDF2 (600K)</strong> · Cifrado de extremo a extremo</div>
+      <div class="ticker-item">✅ <strong>190 PRUEBAS AUTOMATIZADAS</strong> · 94 Vitest + 96 Pytest</div>
+      <!-- Duplicado para bucle infinito fluido -->
+      <div class="ticker-item">⚡ <strong>SINGLE-FILE HTML</strong> · Funciona sin servidor y sin internet</div>
+      <div class="ticker-item">🔒 <strong>CSP CONNECT-SRC 'NONE'</strong> · Bloqueo físico de salida de datos</div>
+      <div class="ticker-item">🐳 <strong>MYSQL 8.4 EN RAM (TMPFS)</strong> · Limpieza instantánea tras cada alumno</div>
+      <div class="ticker-item">👁️ <strong>TESSERACT WASM SIMD</strong> · Preprocesado a 30px para terminales oscuras</div>
+      <div class="ticker-item">🔑 <strong>AES-256-GCM + PBKDF2 (600K)</strong> · Cifrado de extremo a extremo</div>
+      <div class="ticker-item">✅ <strong>190 PRUEBAS AUTOMATIZADAS</strong> · 94 Vitest + 96 Pytest</div>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- MÓDULOS Y CARACTERÍSTICAS (BENTO SPOTLIGHT) -->
+    <section id="modulos" class="reveal">
+      <div class="section-head">
+        <span class="eyebrow">Arquitectura de Producto</span>
+        <h2>Construido para resolver el cuello de botella real de la FP</h2>
+        <p>Un ecosistema completo para los ciclos de ASIR, SMR, DAW y DAM donde la máquina hace el trabajo mecánico y el profesor conserva el 100% del criterio académico.</p>
+      </div>
+
+      <div class="bento-grid" id="bento-container">
+        <div class="bento-card span-8">
+          <div class="card-kicker">01 · MÓDULO DE REDES Y SISTEMAS (ASIR / SMR)</div>
+          <h3>Lectura óptica de memorias en PDF con capturas de VirtualBox</h3>
+          <p>
+            Los alumnos entregan memorias de 30 o 40 páginas llenas de capturas de pantalla con letra pequeña sobre fondo negro. Evaluario descomprime el ZIP de Google Classroom en memoria, invierte el canal de mayor contraste, reescala cada línea a ~30 píxeles y eleva la tasa de detección del 68% al 93%.
+          </p>
+          <ul class="feature-list">
+            <li>Generación automática de listas de comprobación leyendo el enunciado del profesor (PDF, DOCX, ODT) sin usar IA.</li>
+            <li>Sustitución dinámica del número de alumno (<code>192.168.XX.1</code>, <code>red_nat_XX</code>) en cada regla.</li>
+            <li>Navegación instantánea: haz clic en una burbuja y salta a la página exacta del PDF con la captura resaltada.</li>
+          </ul>
+        </div>
+
+        <div class="bento-card span-4">
+          <div class="card-kicker">02 · PRIVACIDAD Y BLINDAJE LEGAL</div>
+          <h3>RGPD y EU AI Act por diseño</h3>
+          <p>
+            Los sistemas de evaluación educativa son clasificados como de Alto Riesgo en el Anexo III 3.b del Reglamento Europeo de IA.
+          </p>
+          <ul class="feature-list">
+            <li>Ningún nombre ni entrega sale jamás del navegador del docente.</li>
+            <li>Política <code>connect-src 'none'</code> verificable en el inspector del navegador.</li>
+            <li>Sin alucinaciones: la misma entrega recibe siempre la misma propuesta.</li>
+          </ul>
+        </div>
+
+        <div class="bento-card span-4">
+          <div class="card-kicker">03 · GESTIÓN POR NIVELES</div>
+          <h3>Cuadernos heredados y copia automática</h3>
+          <p>
+            Organiza cursos, asignaturas, temas y tareas. Las reglas definidas en un curso se heredan automáticamente en todas sus tareas.
+          </p>
+          <ul class="feature-list">
+            <li>Guardado persistente en IndexedDB local.</li>
+            <li>Copia de seguridad diaria automática en carpeta local (Chromium File System API).</li>
+            <li>Instalable como aplicación de escritorio PWA sin conexión.</li>
+          </ul>
+        </div>
+
+        <div class="bento-card span-8">
+          <div class="card-kicker">04 · MÓDULO DE BASES DE DATOS (DAM / DAW / ASIR)</div>
+          <h3>Motor SQL determinista sobre Sandbox MySQL en memoria RAM</h3>
+          <p>
+            Olvídate de corregir scripts <code>.sql</code> a ojo o arriesgar tu equipo ejecutando código de alumnos. El motor levanta un contenedor MySQL 8.4 efímero en RAM y verifica el resultado real de cada ejercicio.
+          </p>
+          <ul class="feature-list">
+            <li><strong>DDL:</strong> Compara el esquema resultante (tablas, tipos equivalentes, PK, FK, UNIQUE, CHECK) aunque varíen los nombres de restricción.</li>
+            <li><strong>SELECT y DML:</strong> Evalúa filas devueltas y cambios en tablas partiendo siempre del estado correcto del ejercicio anterior.</li>
+            <li><strong>Datos de prueba sintéticos:</strong> Genera casos límite automáticos para detectar consultas que aciertan por pura casualidad.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALCULADORA INTERACTIVA DE TIEMPO AHORRADO -->
+    <section id="calculadora" class="reveal">
+      <div class="section-head">
+        <span class="eyebrow">Impacto Medible</span>
+        <h2>Calcula cuántas horas recupera un departamento cada trimestre</h2>
+        <p>Mueve los deslizadores según el tamaño de tus grupos de FP para estimar el ahorro de tiempo real.</p>
+      </div>
+
+      <div class="calc-panel">
+        <div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Alumnos por grupo de FP</span>
+              <span class="slider-val" id="val-alumnos">28 alumnos</span>
+            </div>
+            <input type="range" id="range-alumnos" min="10" max="60" value="28" oninput="updateCalculator()">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Prácticas de Redes / SQL al trimestre</span>
+              <span class="slider-val" id="val-practicas">6 prácticas</span>
+            </div>
+            <input type="range" id="range-practicas" min="2" max="15" value="6" oninput="updateCalculator()">
+          </div>
+
+          <div class="slider-group" style="margin-bottom:0;">
+            <div class="slider-label">
+              <span>Minutos de corrección manual por entrega</span>
+              <span class="slider-val" id="val-minutos">14 min</span>
+            </div>
+            <input type="range" id="range-minutos" min="5" max="30" value="14" oninput="updateCalculator()">
+          </div>
+        </div>
+
+        <div class="calc-results">
+          <div class="calc-box highlight">
+            <div class="calc-number" id="res-horas">27,4 horas</div>
+            <div class="calc-caption">Horas netas ahorradas cada trimestre por asignatura</div>
+          </div>
+          <div class="calc-box">
+            <div class="calc-number" id="res-entregas" style="font-size:1.75rem; color:var(--cyan);">168</div>
+            <div class="calc-caption">Memorias / scripts pre-corregidos</div>
+          </div>
+          <div class="calc-box">
+            <div class="calc-number" style="font-size:1.75rem; color:var(--amber);">0,00 €</div>
+            <div class="calc-caption">Coste en servidores o tokens de IA</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPLORADOR INTERACTIVO DE ARQUITECTURA E INFRAESTRUCTURA -->
+    <section id="arquitectura" class="reveal">
+      <div class="section-head">
+        <span class="eyebrow">Diseño Técnico e Infraestructura</span>
+        <h2>Explora cada capa de la arquitectura del sistema</h2>
+        <p>Haz clic en cada componente para inspeccionar su configuración técnica, sistema operativo y medidas de seguridad.</p>
+      </div>
+
+      <div class="arch-explorer">
+        <div class="arch-nodes">
+          <div class="arch-node active" onclick="selectArchNode(0, this)">
+            <div class="arch-node-id">CAPA 01 · CLIENTE</div>
+            <div class="arch-node-title">Web Single-File PWA</div>
+            <div class="arch-node-tech">React 19 · TypeScript · Vite 8</div>
+          </div>
+          <div class="arch-node" onclick="selectArchNode(1, this)">
+            <div class="arch-node-id">CAPA 02 · VISIÓN LOCAL</div>
+            <div class="arch-node-title">Motor OCR en Worker</div>
+            <div class="arch-node-tech">Tesseract WASM SIMD · PDF.js</div>
+          </div>
+          <div class="arch-node" onclick="selectArchNode(2, this)">
+            <div class="arch-node-id">CAPA 03 · MOTOR SQL</div>
+            <div class="arch-node-title">Corrector Determinista</div>
+            <div class="arch-node-tech">Python 3.14 · uv · PyMySQL</div>
+          </div>
+          <div class="arch-node" onclick="selectArchNode(3, this)">
+            <div class="arch-node-id">CAPA 04 · AISLAMIENTO</div>
+            <div class="arch-node-title">Sandbox MySQL en RAM</div>
+            <div class="arch-node-tech">Docker · MySQL 8.4 · tmpfs</div>
+          </div>
+        </div>
+
+        <div class="arch-detail-box">
+          <div>
+            <h3 id="arch-title" style="font-family:var(--font-display); font-size:1.35rem; margin-bottom:0.6rem;">
+              Cliente Docente Single-File (Sin Servidor)
+            </h3>
+            <p id="arch-desc" style="color:var(--text-secondary); font-size:0.94rem; margin-bottom:1rem;">
+              Toda la aplicación web se compila en un único archivo autónomo (Evaluario.html) protegido con una política de seguridad de contenido (CSP) que deshabilita físicamente cualquier conexión de red desde el navegador.
+            </p>
+            <div style="display:flex; gap:0.85rem; flex-wrap:wrap;">
+              <a href="arquitectura/arquitectura.html" class="btn btn-ghost">Ver Diagramas de Infraestructura y Tabla →</a>
+              <a href="prototipos/prototipos.html" class="btn btn-ghost">Ver Prototipos de Interfaz →</a>
+            </div>
+          </div>
+          <pre class="arch-code" id="arch-code">Content-Security-Policy:
+  default-src 'none';
+  script-src 'unsafe-inline' 'wasm-unsafe-eval';
+  connect-src 'none';
+  worker-src blob: 'self';
+
+Persistencia: IndexedDB + Copia diaria JSON</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANIFICACIÓN Y HOJA DE RUTA (CONECTADA CON JIRA EVA) -->
+    <section id="planificacion" class="reveal">
+      <div class="section-head">
+        <span class="eyebrow">Planificación del Proyecto (Jira EVA)</span>
+        <h2>Hoja de ruta desde el anteproyecto hasta mayo de 2027</h2>
+        <p>Seguimiento real sincronizado con el tablero Kanban del proyecto en Jira.</p>
+      </div>
+
+      <div class="timeline-grid">
+        <div class="phase-card done">
+          <div class="phase-meta"><span>SEP - NOV 2026</span><span style="color:var(--emerald);">● FINALIZADO</span></div>
+          <h4>1. Elección de idea y Anteproyecto</h4>
+          <p>Lluvia de ideas de ASIR, estudio de normativa RGPD / EU AI Act y entrega del anteproyecto técnico.</p>
+        </div>
+
+        <div class="phase-card current">
+          <div class="phase-meta"><span>NOV - 15 DIC 2026</span><span style="color:var(--cyan);">● EN CURSO</span></div>
+          <h4>2. Planificación y Organización</h4>
+          <p>Tablero Kanban en Jira (EVA), repositorio estructurado en GitHub, página de lanzamiento y esquemas técnicos.</p>
+        </div>
+
+        <div class="phase-card upcoming">
+          <div class="phase-meta"><span>DIC 2026 - ENE 2027</span><span>PENDIENTE</span></div>
+          <h4>3. Infraestructura Docker Segura</h4>
+          <p>Hardening del contenedor MySQL 8.4 con montaje volátil en RAM (tmpfs), límites de recursos y bloqueo de ficheros.</p>
+        </div>
+
+        <div class="phase-card upcoming">
+          <div class="phase-meta"><span>FEB - MAR 2027</span><span>PENDIENTE</span></div>
+          <h4>4. Motor SQL y Lector de Redes</h4>
+          <p>Separador con soporte de DELIMITER, comparadores DDL/DML/SELECT y pipeline OCR para capturas de VirtualBox.</p>
+        </div>
+
+        <div class="phase-card upcoming">
+          <div class="phase-meta"><span>MAR - ABR 2027</span><span>PENDIENTE</span></div>
+          <h4>5. Pruebas de Campo y Anti-Copia</h4>
+          <p>Validación con entregas reales anonimizadas, ajuste de rúbricas y detector de MACs/timestamps compartidos.</p>
+        </div>
+
+        <div class="phase-card upcoming">
+          <div class="phase-meta"><span>MAYO 2027</span><span>META FINAL</span></div>
+          <h4>6. Memoria Final y Lanzamiento</h4>
+          <p>Redacción de la memoria oficial del proyecto intermodular, defensa ante el tribunal y apertura comercial.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LISTA DE ESPERA POR CORREO (LANZAMIENTO MAYO 2027) -->
+    <section id="lanzamiento" class="waitlist-section reveal">
+      <span class="eyebrow">Acceso Anticipado para Profesores y Centros</span>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.9rem, 3.8vw, 2.8rem); margin-bottom:0.75rem;">
+        Únete al lanzamiento oficial de mayo de 2027
+      </h2>
+      <p style="color:var(--text-secondary); max-width:600px; margin:0 auto;">
+        Déjanos tu correo docente para recibir acceso prioritario a la versión de lanzamiento, probar el piloto en tus módulos de Redes o Bases de Datos y recibir tu pase de reserva.
+      </p>
+
+      <form class="waitlist-form-box" onsubmit="handleWaitlistSubmit(event)">
+        <input type="email" id="waitlist-email" class="email-input" placeholder="profesor@centroeducativo.es" required>
+        <button type="submit" class="btn btn-primary btn-lg">Unirme a la lista de espera</button>
+      </form>
+
+      <div class="pass-ticket" id="pass-ticket">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px dashed rgba(16, 185, 129, 0.4); padding-bottom:0.5rem; margin-bottom:0.6rem;">
+          <strong>PASE DE ACCESO ANTICIPADO · EVALUARIO 2027</strong>
+          <span id="ticket-code">EVA-2027-089</span>
+        </div>
+        <div>Correo registrado: <span id="ticket-email" style="color:#fff; font-weight:700;"></span></div>
+        <div>Estado: <strong>Reserva prioritaria confirmada para Mayo 2027</strong></div>
+        <div style="margin-top:0.45rem; font-size:0.74rem; color:#a7f3d0;">
+          También se ha preparado tu cliente de correo por si deseas enviarnos directamente los módulos que impartes.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:1.1rem; color:#fff; margin-bottom:0.25rem;">
+          Evaluario · Proyecto Intermodular de ASIR (2026-2027)
+        </div>
+        <div style="font-size:0.84rem; color:var(--text-secondary);">
+          I.E.S. Triana (Sevilla) · Desarrollado por Sergio · Privacidad por diseño
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="https://github.com/Piratapacorro/evaluario-lanzamiento" id="repo-btn-footer" target="_blank" rel="noopener">Repositorio GitHub</a>
+        <a href="https://evaluario.atlassian.net" target="_blank" rel="noopener">Tablero Kanban en Jira</a>
+        <a href="arquitectura/arquitectura.html">Arquitectura e Infraestructura</a>
+        <a href="prototipos/prototipos.html">Prototipos de Interfaz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 1. Red de Nodos Interactiva en el Canvas de Fondo
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    const mouse = { x: -1000, y: -1000 };
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    class NodeParticle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = (Math.random() - 0.5) * 0.45;
+        this.r = Math.random() * 1.8 + 0.8;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.55)';
+        ctx.fill();
+      }
+    }
+
+    const count = Math.min(65, Math.floor((window.innerWidth * window.innerHeight) / 22000));
+    for (let i = 0; i < count; i++) particles.push(new NodeParticle());
+
+    function animateCanvas() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 135) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(6, 182, 212, ${(1 - dist / 135) * 0.16})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+        const mdx = p.x - mouse.x;
+        const mdy = p.y - mouse.y;
+        const mdist = Math.hypot(mdx, mdy);
+        if (mdist < 180) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(16, 185, 129, ${(1 - mdist / 180) * 0.35})`;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+      }
+      requestAnimationFrame(animateCanvas);
+    }
+    animateCanvas();
+
+    // 2. Efecto Spotlight en Tarjetas Bento
+    document.querySelectorAll('.bento-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
+
+    // 3. Conmutador del Simulador en Vivo (Workbench)
+    function switchWorkbench(index) {
+      for (let i = 0; i < 3; i++) {
+        document.getElementById(`wb-panel-${i}`).classList.toggle('active', i === index);
+        document.getElementById(`tab-btn-${i}`).classList.toggle('active', i === index);
+      }
+      const statuses = [
+        '● Escáner WASM listo · 0 conexiones externas',
+        '● Contenedor MySQL 8.4 en RAM (127.0.0.1:3307)',
+        '● Detector heurístico de MACs y timestamps activo'
+      ];
+      document.getElementById('wb-status-text').textContent = statuses[index];
+    }
+
+    // Escenarios de DHCP interactivos
+    function loadDhcpScenario(type, btn) {
+      btn.parentElement.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const term = document.getElementById('dhcp-term-content');
+      const score = document.getElementById('dhcp-score');
+      if (type === 'ok') {
+        score.textContent = '8,5 / 10';
+        score.style.color = 'var(--emerald)';
+        term.innerHTML = `
+          <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
+          <div>default-lease-time <span class="hl-match">3600</span>; max-lease-time 7200;</div>
+          <div>subnet <span class="hl-match">192.168.107.0</span> netmask <span class="hl-match">255.255.255.0</span> {</div>
+          <div>&nbsp;&nbsp;range <span class="hl-match">192.168.107.50 192.168.107.150</span>;</div>
+          <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.107.1</span>;</div>
+          <div>&nbsp;&nbsp;option domain-name-servers <span class="hl-warn">8.8.4.4</span>;</div>
+          <div>}</div>
+          <div style="margin-top:0.45rem;">root@cliente-vb:~# <span style="color:#38bdf8;">ip -4 a show enp0s8</span></div>
+          <div>inet <span class="hl-match">192.168.107.51/24</span> brd 192.168.107.255 scope global dynamic</div>`;
+      } else if (type === 'duda') {
+        score.textContent = '6,0 + rev';
+        score.style.color = 'var(--amber)';
+        term.innerHTML = `
+          <div style="color:#fbbf24;">[PREPROCESADO OCR] Captura pequeña detectada (altura de línea 11px -> escalada a 30px)</div>
+          <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
+          <div>subnet <span class="hl-match">192.168.107.0</span> netmask 255.255.255.0 {</div>
+          <div>&nbsp;&nbsp;range <span class="hl-warn">192.168.107.5O 192.168.107.15O</span>; <span style="color:#fbbf24;">(Baja confianza OCR: marcado 'Por revisar')</span></div>
+          <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.107.1</span>;</div>
+          <div>}</div>
+          <div style="color:#94a3b8; margin-top:0.35rem;">Regla Evaluario: Lo dudoso nunca resta en silencio; se marca en ámbar para el profesor.</div>`;
+      } else {
+        score.textContent = '4,5 / 10';
+        score.style.color = 'var(--rose)';
+        term.innerHTML = `
+          <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
+          <div>subnet <span class="hl-warn">192.168.1.0</span> netmask 255.255.255.0 { <span style="color:#f43f5e;">(No usa el número de alumno 107)</span></div>
+          <div>&nbsp;&nbsp;range <span class="hl-warn">192.168.1.10 192.168.1.20</span>;</div>
+          <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.1.1</span>;</div>
+          <div>}</div>
+          <div style="color:#f43f5e; margin-top:0.35rem;">[DETECCIÓN] La subred configurada no corresponde al esquema individual del alumno.</div>`;
+      }
+    }
+
+    // Interacción al pulsar filas de burbujas
+    function toggleCheckRow(row) {
+      const bubble = row.querySelector('.state-bubble');
+      if (bubble.classList.contains('ok')) {
+        bubble.className = 'state-bubble review';
+        bubble.textContent = '?';
+      } else if (bubble.classList.contains('review')) {
+        bubble.className = 'state-bubble miss';
+        bubble.textContent = '✕';
+      } else {
+        bubble.className = 'state-bubble ok';
+        bubble.textContent = '✓';
+      }
+      recalcDhcpScore();
+    }
+
+    function recalcDhcpScore() {
+      const weights = [2.5, 2.5, 2.0, 1.5, 1.5];
+      const rows = document.querySelectorAll('#dhcp-checks-container .check-row');
+      let sum = 0;
+      let pending = 0;
+      rows.forEach((r, idx) => {
+        const b = r.querySelector('.state-bubble');
+        if (b.classList.contains('ok')) sum += weights[idx];
+        if (b.classList.contains('review')) pending += weights[idx];
+      });
+      const badge = document.getElementById('dhcp-score');
+      badge.textContent = pending > 0
+        ? `${sum.toFixed(1).replace('.', ',')} (+${pending.toFixed(1).replace('.', ',')})`
+        : `${sum.toFixed(1).replace('.', ',')} / 10`;
+    }
+
+    // Escenarios de SQL interactivos
+    function loadSqlScenario(type, btn) {
+      btn.parentElement.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const term = document.getElementById('sql-term-content');
+      if (type === 'casualidad') {
+        term.innerHTML = `
+          <div style="color:#94a3b8;">-- Entrega: Alumno14.sql · Ejercicio 3 (SELECT)</div>
+          <div><span style="color:#38bdf8;">SELECT</span> p.nombre, p.precio <span style="color:#38bdf8;">FROM</span> productos p <span style="color:#38bdf8;">WHERE</span> p.precio <span class="hl-warn">&gt; 100</span>;</div>
+          <div style="margin-top:0.5rem; color:#34d399;">[MOTOR] Con datos.sql básicos: devuelve las mismas 3 filas que la solución.</div>
+          <div style="color:#fbbf24;">[DATOS_EXTRA] Insertando producto en la frontera (precio = 100.00 €)...</div>
+          <div style="color:#f43f5e;">[CAZADO] La solución devuelve 4 filas y el alumno 3. Marcado como 'datos.casualidad'.</div>`;
+      } else if (type === 'sinorden') {
+        term.innerHTML = `
+          <div style="color:#94a3b8;">-- Agrupación automática de fallos idénticos (8 alumnos)</div>
+          <div><span style="color:#38bdf8;">SELECT</span> nombre, salario <span style="color:#38bdf8;">FROM</span> empleados <span style="color:#38bdf8;">WHERE</span> depto = 10;</div>
+          <div style="margin-top:0.5rem; color:#34d399;">[CONJUNTO] Las filas coinciden al 100% con la solución del profesor.</div>
+          <div style="color:#fbbf24;">[ORDEN] Falta ORDER BY salario DESC exigido en la solución.</div>
+          <div style="color:#38bdf8;">[AGRUPACIÓN] Alumnos 02, 05, 09, 11, 15, 18, 21 y 24 agrupados en 1 sola pregunta.</div>`;
+      } else {
+        term.innerHTML = `
+          <div style="color:#94a3b8;">-- Prueba de seguridad ante entrega maliciosa</div>
+          <div><span style="color:#f43f5e;">SELECT</span> * <span style="color:#f43f5e;">INTO OUTFILE</span> '/etc/passwd' <span style="color:#f43f5e;">FROM</span> usuarios;</div>
+          <div style="margin-top:0.5rem; color:#34d399;">[SANDBOX] Error 1290 (HY000): The MySQL server is running with --secure-file-priv=NULL</div>
+          <div style="color:#34d399;">[AISLAMIENTO] Red confinada a 127.0.0.1:3307 y sistema de archivos en RAM intacto.</div>`;
+      }
+    }
+
+    // 4. Calculadora de Ahorro Docente
+    function updateCalculator() {
+      const alumnos = parseInt(document.getElementById('range-alumnos').value, 10);
+      const practicas = parseInt(document.getElementById('range-practicas').value, 10);
+      const minutos = parseInt(document.getElementById('range-minutos').value, 10);
+
+      document.getElementById('val-alumnos').textContent = `${alumnos} alumnos`;
+      document.getElementById('val-practicas').textContent = `${practicas} prácticas`;
+      document.getElementById('val-minutos').textContent = `${minutos} min`;
+
+      const entregas = alumnos * practicas;
+      const horasManual = (entregas * minutos) / 60;
+      const horasAhorradas = horasManual * 0.72;
+
+      document.getElementById('res-entregas').textContent = entregas;
+      document.getElementById('res-horas').textContent = `${horasAhorradas.toFixed(1).replace('.', ',')} horas`;
+    }
+
+    // 5. Explorador de Arquitectura
+    const archData = [
+      {
+        title: 'Cliente Docente Single-File (Sin Servidor)',
+        desc: 'Toda la aplicación web se compila en un único archivo autónomo (Evaluario.html) protegido con una política de seguridad de contenido (CSP) que deshabilita físicamente cualquier conexión de red desde el navegador.',
+        code: `Content-Security-Policy:\n  default-src 'none';\n  script-src 'unsafe-inline' 'wasm-unsafe-eval';\n  connect-src 'none';\n  worker-src blob: 'self';\n\nPersistencia: IndexedDB + Copia diaria JSON`
+      },
+      {
+        title: 'Motor de Visión y OCR en WebAssembly',
+        desc: 'Extrae el texto de los PDF y pasa las capturas de pantalla por un preprocesador Canvas que toma el canal más fuerte en fondos oscuros y escala la letra pequeña hasta 30 píxeles por línea antes de ejecutar Tesseract en un Web Worker.',
+        code: `// Preprocesado antes de Tesseract WASM\nconst { gris } = aGrises(imageData.data);\nconst escala = escalaParaOcr(pasoDeLineas(gris), ancho, alto);\n// Precisión medida en capturas de terminal: 93% vs 68%`
+      },
+      {
+        title: 'Corrector Determinista SQL en Python',
+        desc: 'CLI gestionado con uv que separa sentencias respetando bloques DELIMITER, ejecuta contra el sandbox, inyecta datos de frontera y genera el informe Markdown, el CSV para Excel y el JSON de calibración.',
+        code: `$ uv run corrector comprobar\n«Sandbox MySQL 8.4 disponible en 127.0.0.1:3307»\n$ uv run corrector corregir ./practica-01\n✓ 96 pruebas en Pytest superadas`
+      },
+      {
+        title: 'Sandbox Docker MySQL 8.4 Blindado en RAM',
+        desc: 'Contenedor efímero cuyos datos viven exclusivamente en memoria RAM (tmpfs). Impide lectura o escritura en disco, desactiva tareas programadas y corta consultas lentas a los 5 segundos.',
+        code: `tmpfs:\n  - /var/lib/mysql:size=768m\ncommand:\n  - --secure-file-priv=NULL\n  - --local-infile=0\n  - --max-execution-time=5000`
+      }
+    ];
+
+    function selectArchNode(index, el) {
+      document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('arch-title').textContent = archData[index].title;
+      document.getElementById('arch-desc').textContent = archData[index].desc;
+      document.getElementById('arch-code').textContent = archData[index].code;
+    }
+
+    // 6. Formulario de Lista de Espera para Mayo 2027
+    function handleWaitlistSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('waitlist-email').value.trim();
+      if (!email) return;
+      const code = 'EVA-2027-' + Math.floor(100 + Math.random() * 900);
+      document.getElementById('ticket-code').textContent = code;
+      document.getElementById('ticket-email').textContent = email;
+      const ticket = document.getElementById('pass-ticket');
+      ticket.style.display = 'block';
+      ticket.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const subject = encodeURIComponent(`Reserva Lista de Espera Evaluario (Mayo 2027) · ${code}`);
+      const body = encodeURIComponent(
+        `Hola Sergio,\n\nQuiero unirme a la lista de espera para el lanzamiento de Evaluario en mayo de 2027.\n\nCorreo docente: ${email}\nCódigo de reserva: ${code}\nCiclo / Módulos de interés: (Redes / Bases de Datos)\n`
+      );
+      setTimeout(() => {
+        window.location.href = `mailto:sergirrogar@gmail.com?subject=${subject}&body=${body}`;
+      }, 600);
+    }
+
+    // 7. Aparición suave al hacer scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
