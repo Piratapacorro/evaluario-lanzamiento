@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evaluario · Recupera tus tardes corrigiendo prácticas de Informática</title>
-  <meta name="description" content="El cuaderno de pre-corrección inteligente para profesores de FP de Informática. Evalúa memorias de redes, sistemas y prácticas SQL en minutos, con privacidad total en tu equipo.">
+  <title>Evaluario · Corrección asistida en local para profesores de FP de Informática</title>
+  <meta name="description" content="Asistente de pre-corrección local para docentes de Informática. Evalúa memorias en PDF con capturas de terminal, prácticas SQL en contenedores Docker aislados y hojas ópticas OMR sin sacar datos del aula.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,7 +25,6 @@
       --teal-soft: rgba(11, 122, 110, 0.12);
       --amber: #D97706;
       --amber-soft: rgba(217, 119, 6, 0.15);
-      --highlighter: rgba(250, 204, 21, 0.55);
       --font-serif: 'Fraunces', Georgia, serif;
       --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -68,7 +67,7 @@
       cursor: crosshair;
     }
 
-    /* Lienzo interactivo de tinta que se desvanece poco a poco */
+    /* Lienzo de tinta: solo pinta cuando haces clic y arrastras en una zona vacía */
     #ink-canvas {
       position: fixed;
       inset: 0;
@@ -78,7 +77,7 @@
       z-index: 45;
     }
 
-    /* Estuche Flotante de Corrección (Para pintar en la web) */
+    /* Estuche Flotante de Corrección */
     .pen-dock {
       position: fixed;
       bottom: 1.25rem;
@@ -159,7 +158,7 @@
       transform: translateY(8px);
     }
 
-    /* Cinta superior estilo marcapáginas editorial */
+    /* Cinta superior editorial */
     .top-ribbon {
       position: relative;
       z-index: 30;
@@ -272,7 +271,6 @@
       transform: translate(-1px, -1px);
     }
 
-    /* Botones táctiles corregidos */
     .btn-tactile {
       display: inline-flex;
       align-items: center;
@@ -337,7 +335,6 @@
       z-index: 10;
     }
 
-    /* Animación de entrada por scroll */
     .reveal-on-scroll {
       opacity: 0;
       transform: translateY(24px);
@@ -413,9 +410,9 @@
     }
 
     .hero-subtitle {
-      font-size: 1.13rem;
+      font-size: 1.12rem;
       color: var(--ink-body);
-      margin-bottom: 1.65rem;
+      margin-bottom: 1.55rem;
       max-width: 590px;
     }
 
@@ -427,11 +424,11 @@
       border: 1.5px dashed var(--amber);
       border-radius: 8px;
       padding: 0.5rem 0.9rem;
-      margin-bottom: 1.65rem;
+      margin-bottom: 1.6rem;
       font-family: var(--font-hand);
       font-size: 1.22rem;
       color: #92400E;
-      transform: rotate(-0.6deg);
+      transform: rotate(-0.5deg);
     }
 
     .hero-actions {
@@ -449,7 +446,7 @@
       padding-top: 1.2rem;
       border-top: 1.5px dashed var(--line-strong);
       font-family: var(--font-mono);
-      font-size: 0.77rem;
+      font-size: 0.76rem;
       color: var(--ink-muted);
     }
 
@@ -559,7 +556,7 @@
       border: 1px solid var(--line-strong);
     }
 
-    /* SECCIÓN PASO A PASO (3 PASOS SIN INSTALACIÓN PARA ALUMNOS) */
+    /* SECCIÓN PASO A PASO ( FLUJO REAL DE EVALUARIO ) */
     .steps-strip {
       margin: 1rem 0 4rem;
       background: var(--paper-warm);
@@ -842,11 +839,6 @@
       cursor: pointer;
     }
 
-    .copy-pill:hover {
-      background: var(--amber);
-      color: #fff;
-    }
-
     .sheet-inspector-pane {
       padding: 1.4rem;
       background: var(--paper-tint);
@@ -966,7 +958,7 @@
       color: #fff;
     }
 
-    /* LUPA DE CONTRASTE DE CAPTURAS BORROSAS (ANTES / DESPUÉS) */
+    /* LUPA DE CONTRASTE DE CAPTURAS BORROSAS (FUNCIONALIDAD REAL DEL MOTOR DE IMAGEN) */
     .contrast-lab-box {
       margin-top: 2rem;
       background: var(--paper-warm);
@@ -1002,14 +994,14 @@
       box-shadow: 0 0 0 2px var(--teal);
     }
 
-    /* 3 FICHAS DE ARCHIVADOR */
+    /* 4 FICHAS DE ARCHIVADOR: QUÉ HACE HOY Y QUÉ LLEGA EN MAYO */
     .cards-section {
       padding: 2.5rem 0 4.5rem;
     }
 
     .index-cards-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.75rem;
     }
 
@@ -1031,31 +1023,31 @@
     .card-tab-number {
       display: inline-block;
       font-family: var(--font-mono);
-      font-size: 0.73rem;
+      font-size: 0.72rem;
       font-weight: 700;
       padding: 0.24rem 0.65rem;
       border: 1.5px solid var(--ink-deep);
       border-radius: 4px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.95rem;
     }
 
     .index-card h3 {
       font-family: var(--font-serif);
-      font-size: 1.4rem;
+      font-size: 1.38rem;
       line-height: 1.22;
-      margin-bottom: 0.7rem;
+      margin-bottom: 0.65rem;
     }
 
     .index-card p {
       color: var(--ink-body);
-      font-size: 0.94rem;
-      margin-bottom: 1.15rem;
+      font-size: 0.93rem;
+      margin-bottom: 1.1rem;
     }
 
     .check-bullets {
       list-style: none;
       display: grid;
-      gap: 0.55rem;
+      gap: 0.52rem;
       font-size: 0.87rem;
       color: var(--ink-deep);
       border-top: 1.5px dashed var(--line-strong);
@@ -1163,7 +1155,7 @@
       color: var(--teal);
     }
 
-    /* MODALIDADES DE LICENCIA (DOCENTE INDIVIDUAL VS DEPARTAMENTO/CENTRO) */
+    /* MODALIDADES DE DESPLIEGUE REALES (EQUIPO DOCENTE VS SERVIDOR DE DEPARTAMENTO) */
     .plans-section {
       padding: 1.5rem 0 5rem;
     }
@@ -1206,20 +1198,6 @@
       padding: 0.22rem 0.65rem;
       border-radius: 4px;
       border: 1.5px solid var(--ink-deep);
-    }
-
-    .plan-price {
-      font-family: var(--font-serif);
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin: 0.7rem 0 0.25rem;
-    }
-
-    .plan-price span {
-      font-family: var(--font-sans);
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--ink-muted);
     }
 
     /* PREGUNTAS FRECUENTES DE PROFESORES */
@@ -1267,7 +1245,7 @@
       display: block;
     }
 
-    /* SECCIÓN DE INVITACIÓN + LIBRO DE REGISTRO EN VIVO */
+    /* SECCIÓN DE INVITACIÓN + LISTA DE INSCRITOS EN VIVO (SIN DATOS FALSOS) */
     .boarding-section {
       padding: 1rem 0 5.5rem;
     }
@@ -1357,13 +1335,13 @@
       color: var(--ink-deep);
     }
 
-    /* Libro de Registro de Docentes Apuntados */
     .waitlist-ledger {
       background: var(--paper-card);
       border: 2px solid var(--ink-deep);
       border-radius: 12px;
       padding: 1rem;
       margin-top: 0.8rem;
+      min-height: 210px;
       max-height: 295px;
       overflow-y: auto;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
@@ -1443,19 +1421,19 @@
 </head>
 <body>
 
-  <!-- Lienzo donde el usuario puede pintar sobre la página y se borra poco a poco -->
+  <!-- Lienzo donde el usuario solo pinta al hacer clic y arrastrar en una zona vacía del papel -->
   <canvas id="ink-canvas"></canvas>
 
-  <!-- Aviso flotante del estuche de pintura -->
+  <!-- Aviso flotante del estuche -->
   <div class="pen-hint-toast" id="pen-toast">
-    ✍️ ¡Haz clic y arrastra en cualquier parte del papel para pintar! (Se borra poco a poco)
+    ✍️ Haz clic y arrastra sobre cualquier fondo vacío de papel para anotar (se borra poco a poco)
   </div>
 
   <!-- Estuche Flotante de Corrección -->
-  <div class="pen-dock" aria-label="Estuche de bolígrafos para pintar en la página">
+  <div class="pen-dock" aria-label="Estuche de bolígrafos para anotar en el fondo de papel">
     <div class="pen-dock-label">
-      <strong>🖊️ Pintar:</strong>
-      <span>se borra solo</span>
+      <strong>🖊️ Bolígrafo:</strong>
+      <span>clic en fondo vacío</span>
     </div>
     <button type="button" class="pen-tool-btn active" id="tool-red" onclick="selectPenTool('red')" title="Bolígrafo rojo de corrección">
       <span class="pen-swatch" style="background: #E03E52;"></span>
@@ -1466,20 +1444,20 @@
     <button type="button" class="pen-tool-btn" id="tool-highlighter" onclick="selectPenTool('highlighter')" title="Subrayador fluorescente amarillo">
       <span class="pen-swatch" style="background: #FACC15; border-radius: 3px;"></span>
     </button>
-    <button type="button" class="pen-tool-btn" id="tool-stamp" onclick="selectPenTool('stamp')" title="Estampar sello ¡APROBADO! con un clic">
+    <button type="button" class="pen-tool-btn" id="tool-stamp" onclick="selectPenTool('stamp')" title="Estampar sello haciendo clic en un hueco vacío">
       💮
     </button>
-    <button type="button" class="pen-tool-btn" onclick="clearAllInkNow()" title="Limpiar trazos ahora">
+    <button type="button" class="pen-tool-btn" onclick="clearAllInkNow()" title="Borrar anotaciones ahora">
       🧹
     </button>
   </div>
 
   <!-- Cinta superior editorial -->
   <div class="top-ribbon">
-    <span class="ribbon-pill">CONVOCATORIA MAYO 2027</span>
-    <span>Reserva prioritaria para docentes y departamentos de FP de Informática</span>
+    <span class="ribbon-pill">LANZAMIENTO MAYO 2027</span>
+    <span>Pre-corrección local de memorias PDF, prácticas SQL en Docker y lectura óptica OMR</span>
     <span>·</span>
-    <span>Privacidad total RGPD · Tus alumnos no tienen que registrarse</span>
+    <span>Ningún dato de alumnos sale del ordenador del profesor</span>
   </div>
 
   <!-- Cabecera editorial -->
@@ -1498,8 +1476,8 @@
         <a href="#pupitre" class="binder-tab">01 · Pupitre en vivo</a>
         <a href="#modulos" class="binder-tab">02 · Qué corrige</a>
         <a href="#calculadora" class="binder-tab">03 · Calculadora</a>
-        <a href="#licencias" class="binder-tab">04 · Licencias</a>
-        <a href="#reserva" class="binder-tab">05 · Lista de espera</a>
+        <a href="#despliegue" class="binder-tab">04 · Modalidades</a>
+        <a href="#reserva" class="binder-tab">05 · Lista de interés</a>
       </nav>
 
       <a href="#reserva" class="btn-tactile btn-coral">Apuntarme en la lista</a>
@@ -1510,27 +1488,27 @@
     <!-- HERO EDITORIAL -->
     <section class="hero-editorial">
       <div>
-        <div class="stamp-tag">✦ Especial para profesores de SMR · ASIR · DAW · DAM</div>
+        <div class="stamp-tag">✦ Para profesores de FP de Informática (SMR · ASIR · DAW · DAM)</div>
         <h1 class="hero-title">
           Deja de perder tus domingos leyendo capturas de pantalla <span class="hand-circle">una a una<svg viewBox="0 0 220 68" fill="none"><path d="M12 46 C 45 8, 185 6, 206 34 C 218 52, 160 64, 38 56 C 10 53, 6 32, 34 20" stroke="#E03E52" stroke-width="3.2" stroke-linecap="round"/></svg></span>
         </h1>
         <p class="hero-subtitle">
-          <strong>Evaluario</strong> lee las memorias en PDF y los scripts SQL de toda tu clase en segundos, comprueba cada requisito con tus propios criterios y te prepara la hoja de calificación lista para tu visto bueno.
+          <strong>Evaluario</strong> analiza en tu propio equipo las memorias en PDF con capturas de terminal y ejecuta los ejercicios SQL de tu clase en un contenedor aislado sin internet, preparándote un borrador de corrección auditable donde tú siempre decides la nota final.
         </p>
 
         <div class="draw-invite-banner">
-          <span>✍️ Prueba a subrayar o rodear cualquier texto de esta hoja con el ratón: ¡la tinta es tuya y se desvanece poco a poco!</span>
+          <span>✍️ Puedes hacer clic y arrastrar sobre cualquier hueco libre del fondo cuadriculado para hacer anotaciones que se borran poco a poco.</span>
         </div>
 
         <div class="hero-actions">
-          <a href="#reserva" class="btn-tactile btn-coral">Apuntarme en la lista oficial →</a>
+          <a href="#reserva" class="btn-tactile btn-coral">Solicitar prueba o información →</a>
           <a href="#pupitre" class="btn-tactile btn-paper">Probar el pupitre interactivo</a>
         </div>
 
         <div class="trust-badges">
-          <span><strong>✓ Tú decides siempre la nota final</strong></span>
-          <span><strong>✓ Cumple 100% RGPD docente</strong></span>
-          <span><strong>✓ Funciona con Moodle y Classroom</strong></span>
+          <span><strong>✓ Toda nota es un borrador revisable</strong></span>
+          <span><strong>✓ 100% local · Cero datos en nubes externas</strong></span>
+          <span><strong>✓ Lotes .ZIP de Moodle o Classroom</strong></span>
         </div>
       </div>
 
@@ -1554,54 +1532,54 @@
         <div class="sunday-scene" id="sunday-content">
           <div class="scene-time">
             <span style="color: var(--teal);">DOMINGO · 17:20 H</span>
-            <span style="background: var(--teal-soft); color: var(--teal); padding: 0.15rem 0.5rem; border-radius: 4px;">18 MINUTOS EN TOTAL</span>
+            <span style="background: var(--teal-soft); color: var(--teal); padding: 0.15rem 0.5rem; border-radius: 4px;">FLUJO ASISTIDO</span>
           </div>
           <p style="font-family: var(--font-serif); font-size: 1.22rem; font-weight: 600;">
-            30 memorias de DHCP pre-corregidas y listas para tu visto bueno
+            30 memorias de DHCP pre-revisadas en tu propio equipo
           </p>
           <ul class="scene-list">
             <li>
               <span style="color: var(--teal); font-weight: 700;">01</span>
-              <span>Arrastras el ZIP descargado de Classroom o Moodle directamente a la hoja.</span>
+              <span>Subes el PDF de tu enunciado y ajustas la lista de comprobaciones sugerida.</span>
             </li>
             <li>
               <span style="color: var(--teal); font-weight: 700;">02</span>
-              <span>Evaluario localiza en qué página y captura está cada IP, máscara y comando.</span>
+              <span>Sueltas los PDFs o archivos <code>.sql</code> de la clase y Evaluario localiza cada evidencia.</span>
             </li>
             <li>
               <span style="color: var(--teal); font-weight: 700;">03</span>
-              <span>Te avisa en privado si dos alumnos han entregado capturas de la misma máquina virtual.</span>
+              <span>Te muestra un aviso privado si dos entregas comparten dirección MAC, UUID o reloj exacto.</span>
             </li>
             <li>
               <span style="color: var(--teal); font-weight: 700;">04</span>
-              <span>Revisas solo los puntos dudosos, ajustas lo que quieras y descargas el Excel de notas.</span>
+              <span>Revisas los puntos dudosos, cambias cualquier nota con un clic y exportas el CSV/Excel.</span>
             </li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- TIRA DE 3 PASOS: CÓMO FUNCIONA EN EL DÍA A DÍA -->
+    <!-- TIRA DE 3 PASOS: FLUJO REAL SIN CAMBIAR LA FORMA DE ENTREGAR DEL ALUMNO -->
     <section class="steps-strip reveal-on-scroll">
       <div class="step-item">
         <div class="step-badge">01</div>
         <div>
-          <h3>Sube tu enunciado de siempre</h3>
-          <p>Tus alumnos no tienen que instalar nada ni cambiar su forma de trabajar. Subes tu PDF o Word y Evaluario propone la lista de puntos a evaluar.</p>
+          <h3>Sube el PDF de tu enunciado</h3>
+          <p>Evaluario lee tu enunciado y te sugiere automáticamente la tabla de comprobaciones (incluyendo variables por número de alumno como <code>192.168.{N}.1</code>).</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-badge">02</div>
         <div>
-          <h3>Arrastra el lote de entregas</h3>
-          <p>Suelta el archivo ZIP de Moodle o Google Classroom. El lector óptico inspecciona las capturas de terminal o ejecuta las consultas SQL en segundos.</p>
+          <h3>Suelta las entregas (.PDF, .SQL o .ZIP)</h3>
+          <p>Tus alumnos no tienen que registrarse en ningún sitio. Descargas sus entregas de Moodle o Classroom y el motor local las analiza en tu ordenador.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-badge">03</div>
         <div>
-          <h3>Revisa, ajusta y exporta</h3>
-          <p>Comprueba de un vistazo las evidencias marcadas, modifica cualquier punto con un clic y exporta las calificaciones y comentarios listos para pegar.</p>
+          <h3>Supervisa el borrador y exporta</h3>
+          <p>Inspeccionas la página exacta de cada captura o el resultado de la consulta SQL, das tu visto bueno y descargas la hoja de calificaciones.</p>
         </div>
       </div>
     </section>
@@ -1609,29 +1587,29 @@
     <!-- PUPITRE INTERACTIVO: PRUÉBALO EN VIVO -->
     <section class="desk-section reveal-on-scroll" id="pupitre">
       <div class="section-header">
-        <span class="section-kicker">Demostración Interactiva</span>
-        <h2>Toca las burbujas, cambia de alumno y mira cómo trabaja para ti</h2>
-        <p>Cada fila es un alumno y cada columna es un requisito de tu práctica. Haz clic en cualquier alumno o pulsa sobre las burbujas para comprobar cómo tú tienes siempre el mando.</p>
+        <span class="section-kicker">Demostración del Flujo Real</span>
+        <h2>Toca las burbujas, cambia de alumno y comprueba cómo supervisas cada nota</h2>
+        <p>Toda calificación que genera Evaluario es un borrador en bruto. Haz clic en cualquier fila o sobre las burbujas (<code>✓</code>, <code>?</code>, <code>✕</code>) para ver cómo el profesor tiene siempre la última palabra.</p>
       </div>
 
       <div class="omr-sheet-frame">
         <div class="sheet-topbar">
           <div class="mode-pills">
             <button class="mode-pill active" id="pill-redes" onclick="switchSubject('redes')">
-              Práctica de Redes · Servidor DHCP en VirtualBox
+              Módulo 1 · Memorias PDF de Redes (DHCP)
             </button>
             <button class="mode-pill" id="pill-sql" onclick="switchSubject('sql')">
-              Práctica de Bases de Datos · Consultas y Tablas SQL
+              Módulo 2 · Entregas SQL en Sandbox MySQL 8.4
             </button>
           </div>
 
           <button class="scan-trigger-btn" onclick="triggerOpticalScan()">
-            ▶ Pasar lector óptico a la clase
+            ▶ Simular barrido de la clase
           </button>
         </div>
 
         <div class="sheet-workbench">
-          <!-- Izquierda: Hoja OMR -->
+          <!-- Izquierda: Hoja de resultados por alumno -->
           <div class="sheet-table-pane">
             <div class="scanner-light-bar" id="scanner-bar"></div>
             <table class="omr-table">
@@ -1641,9 +1619,9 @@
               <tbody id="omr-tbody"></tbody>
             </table>
             <div style="margin-top: 1rem; display: flex; gap: 1.25rem; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.73rem; color: var(--ink-muted);">
-              <span><strong style="color:var(--teal);">● Llena:</strong> Evidencia encontrada</span>
-              <span><strong style="color:var(--amber);">◌ Punteada:</strong> Dudoso (para tu revisión)</span>
-              <span><strong style="color:var(--coral);">✕ Tachada:</strong> No aparece en la entrega</span>
+              <span><strong style="color:var(--teal);">● Cumple (✓):</strong> Evidencia verificada</span>
+              <span><strong style="color:var(--amber);">◌ Dudoso (?):</strong> Requiere revisión del profesor</span>
+              <span><strong style="color:var(--coral);">✕ No cumple (✕):</strong> No encontrado o erróneo</span>
             </div>
           </div>
 
@@ -1656,11 +1634,11 @@
                     INSPECCIÓN DE ENTREGA · PÁGINA 6 DEL PDF
                   </div>
                   <h3 style="font-family: var(--font-serif); font-size: 1.48rem;" id="insp-name">
-                    Lucía Gómez (Alumno 07)
+                    Alumno 07 · Entrega DHCP
                   </h3>
                 </div>
                 <div class="grade-stamp-box">
-                  <div class="grade-stamp-label">PROPUESTA</div>
+                  <div class="grade-stamp-label">BORRADOR</div>
                   <div class="grade-stamp-val" id="insp-grade">8,5</div>
                 </div>
               </div>
@@ -1672,10 +1650,10 @@
               <div class="feedback-card" id="insp-feedback"></div>
               <div class="inspector-actions">
                 <button type="button" class="mini-btn" onclick="copyStudentFeedback()" id="btn-copy-fb">
-                  📋 Copiar comentario para el alumno
+                  📋 Copiar retroalimentación
                 </button>
                 <button type="button" class="mini-btn" onclick="approveAllForStudent()">
-                  ✓ Dar por buena toda la fila (10,0)
+                  ✓ Validar todos los puntos (10,0)
                 </button>
               </div>
             </div>
@@ -1683,17 +1661,17 @@
         </div>
       </div>
 
-      <!-- Lupa de realce de capturas borrosas -->
+      <!-- Lupa de realce de capturas borrosas (Pre-procesado real en el backend) -->
       <div class="contrast-lab-box">
         <div style="max-width: 460px;">
           <div style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: var(--teal); text-transform: uppercase;">
-            Lente de Pre-Procesado Óptico
+            Pre-Procesado de Capturas de Terminal
           </div>
           <h3 style="font-family: var(--font-serif); font-size: 1.28rem; margin: 0.2rem 0 0.35rem;">
-            ¿Tus alumnos pegan capturas oscuras y diminutas?
+            ¿Capturas de máquina virtual oscuras y con letra pequeña?
           </h3>
           <p style="font-size: 0.88rem; color: var(--ink-body);">
-            Pulsa el botón para ver cómo Evaluario recorta y enfoca automáticamente las terminales de Linux o Windows antes de extraer las IPs.
+            Antes de pasar el modelo de visión local, Evaluario recorta los bordes de la ventana, escala la imagen y mejora el contraste para no confundir un <code>.107</code> con un <code>.101</code>.
           </p>
         </div>
 
@@ -1704,56 +1682,69 @@
         </div>
 
         <button type="button" class="btn-tactile btn-paper" onclick="toggleLensEnhance(this)">
-          🔍 Probar enfoque automático
+          🔍 Ver efecto del pre-procesado
         </button>
       </div>
     </section>
 
-    <!-- QUÉ CORRIGE: 3 FICHAS DE ARCHIVADOR -->
+    <!-- QUÉ CORRIGE HOY Y QUÉ SE INCORPORA EN EL LANZAMIENTO DE MAYO -->
     <section class="cards-section reveal-on-scroll" id="modulos">
       <div class="section-header">
-        <span class="section-kicker">Especializado en Informática</span>
-        <h2>Pensado para las prácticas que ninguna otra herramienta sabe evaluar</h2>
-        <p>Olvídate de formularios tipo test. Evaluario entiende de subredes, consolas de comandos, máquinas virtuales y esquemas relacionales.</p>
+        <span class="section-kicker">Arquitectura Real del Proyecto</span>
+        <h2>Qué módulos funcionan hoy y qué se completa para mayo de 2027</h2>
+        <p>Sin promesas vacías: estas son las piezas técnicas reales que componen Evaluario.</p>
       </div>
 
       <div class="index-cards-grid">
         <article class="index-card">
-          <span class="card-tab-number" style="background: var(--teal-soft); color: var(--teal);">FICHA 01 · REDES Y SISTEMAS</span>
-          <h3>Memorias en PDF llenas de capturas de terminal</h3>
+          <span class="card-tab-number" style="background: var(--teal-soft); color: var(--teal);">OPERATIVO · MEMORIAS TÉCNICAS PDF</span>
+          <h3>Corrección de prácticas de Redes y Sistemas</h3>
           <p>
-            Localiza archivos de configuración, salidas de comandos y pruebas de ping o concesión aunque el alumno haya entregado 25 páginas desordenadas.
+            Extrae texto e imágenes de cada página del PDF entregado por el alumno y verifica cada requisito técnico con modelos de visión ejecutados en local.
           </p>
           <ul class="check-bullets">
-            <li><strong>▸</strong> <span>Comprueba que cada alumno use su propio número en la IP (<code>192.168.XX.1</code>).</span></li>
-            <li><strong>▸</strong> <span>Lee el PDF o Word de tu enunciado y te sugiere los criterios en segundos.</span></li>
-            <li><strong>▸</strong> <span>Te lleva con un clic a la página exacta donde está cada captura.</span></li>
+            <li><strong>▸</strong> <span>Soporta reglas personalizadas por número de lista del alumno (ej. subred <code>192.168.{N}.0/24</code>).</span></li>
+            <li><strong>▸</strong> <span>Genera la lista de comprobaciones automáticamente a partir del PDF de tu enunciado.</span></li>
+            <li><strong>▸</strong> <span>Enlaza cada criterio directamente con la página y captura donde se encontró la evidencia.</span></li>
           </ul>
         </article>
 
         <article class="index-card">
-          <span class="card-tab-number" style="background: var(--coral-soft); color: var(--coral);">FICHA 02 · BASES DE DATOS</span>
-          <h3>Prácticas de SQL probadas con datos reales y casos trampa</h3>
+          <span class="card-tab-number" style="background: var(--coral-soft); color: var(--coral);">OPERATIVO · SANDBOX DOCKER MYSQL 8.4</span>
+          <h3>Evaluador de Bases de Datos SQL con casos límite</h3>
           <p>
-            Ejecuta las tablas y consultas de cada alumno en un entorno aislado y compara las filas devueltas con las de tu solución oficial.
+            Ejecuta los scripts <code>.sql</code> de los alumnos dentro de un contenedor Docker con MySQL 8.4 aislado sin red (<code>network_mode: none</code>) y compara el resultado real.
           </p>
           <ul class="check-bullets">
-            <li><strong>▸</strong> <span>Pilla las consultas que acertaban de casualidad con pocos datos.</span></li>
-            <li><strong>▸</strong> <span>Agrupa a los alumnos con el mismo fallo para que decidas la nota una sola vez.</span></li>
-            <li><strong>▸</strong> <span>Evalúa creación de tablas (DDL), consultas (SELECT) y modificaciones (DML).</span></li>
+            <li><strong>▸</strong> <span>Doble juego de pruebas: verifica con los datos del enunciado y con datos ocultos de casos límite.</span></li>
+            <li><strong>▸</strong> <span>Agrupa en clústeres las consultas que devuelven el mismo resultado parcial para calificarlas juntas.</span></li>
+            <li><strong>▸</strong> <span>Evalúa creación de esquemas (DDL), consultas (SELECT) y operaciones de modificación (DML).</span></li>
           </ul>
         </article>
 
         <article class="index-card">
-          <span class="card-tab-number" style="background: var(--amber-soft); color: #92400e;">FICHA 03 · DETECTOR DE COPIAS</span>
-          <h3>Aviso discreto cuando dos memorias comparten máquina</h3>
+          <span class="card-tab-number" style="background: var(--amber-soft); color: #92400e;">OPERATIVO · ANÁLISIS FORENSE DE EVIDENCIAS</span>
+          <h3>Detector privado de capturas compartidas</h3>
           <p>
-            Busca dentro de las capturas aquellos identificadores técnicos que nunca coinciden por azar entre dos ordenadores distintos.
+            Cruza los identificadores técnicos extraídos de las capturas de toda la clase que no deberían coincidir entre dos máquinas virtuales distintas.
           </p>
           <ul class="check-bullets">
-            <li><strong>▸</strong> <span>Detecta direcciones MAC idénticas, UUIDs o la misma hora exacta hasta el segundo.</span></li>
-            <li><strong>▸</strong> <span>Ignora lo que es normal que coincida en clase (como la red NAT de VirtualBox).</span></li>
-            <li><strong>▸</strong> <span>Muestra un aviso privado solo para ti con comparativa cara a cara.</span></li>
+            <li><strong>▸</strong> <span>Detecta direcciones MAC idénticas, UUIDs de disco o exactamente el mismo segundo en el reloj.</span></li>
+            <li><strong>▸</strong> <span>Descarta automáticamente valores comunes del taller (como la IP <code>10.0.2.15</code> de red NAT).</span></li>
+            <li><strong>▸</strong> <span>Nunca penaliza la nota por su cuenta: muestra una alerta discreta solo para el docente.</span></li>
+          </ul>
+        </article>
+
+        <article class="index-card">
+          <span class="card-tab-number" style="background: var(--paper-warm); color: var(--ink-deep);">HOJA DE RUTA MAYO 2027 · LECTURA ÓPTICA OMR</span>
+          <h3>Corrección de exámenes en papel desde el escáner</h3>
+          <p>
+            Módulo en desarrollo para el lanzamiento de mayo: impresión de plantillas de burbujas OMR y lectura automática del lote PDF escaneado en la fotocopiadora del centro.
+          </p>
+          <ul class="check-bullets">
+            <li><strong>▸</strong> <span>Alineación automática por marcas de registro en las esquinas mediante visión artificial (OpenCV).</span></li>
+            <li><strong>▸</strong> <span>Detección de respuestas marcadas, tachones y casillas dudosas con recorte visual para el profesor.</span></li>
+            <li><strong>▸</strong> <span>Unificación en el mismo cuaderno de las notas del examen en papel y de las prácticas de laboratorio.</span></li>
           </ul>
         </article>
       </div>
@@ -1763,8 +1754,8 @@
     <section class="receipt-section reveal-on-scroll" id="calculadora">
       <div class="section-header">
         <span class="section-kicker">Calculadora Docente</span>
-        <h2>¿Cuántas tardes libres vas a recuperar este trimestre?</h2>
-        <p>Ajusta los deslizadores a tus grupos actuales y mira el cálculo en el resguardo.</p>
+        <h2>Calcula cuánto tiempo dedicas hoy a revisar entregas repetitivas</h2>
+        <p>Ajusta los deslizadores al volumen real de tus grupos de FP para estimar las horas de pre-corrección que puedes automatizar.</p>
       </div>
 
       <div class="receipt-workbench">
@@ -1779,7 +1770,7 @@
 
           <div class="tactile-slider">
             <div class="tactile-slider-head">
-              <span>Prácticas con memoria o SQL al trimestre</span>
+              <span>Prácticas con memoria PDF o SQL al trimestre</span>
               <span class="tactile-slider-val" id="lbl-practicas">6 prácticas</span>
             </div>
             <input type="range" class="paper-range" id="sl-practicas" min="2" max="15" value="6" oninput="calcReceipt()">
@@ -1797,7 +1788,7 @@
         <div class="paper-receipt">
           <div class="receipt-header">
             <div style="font-weight: 700; font-size: 0.95rem;">RESUMEN DE TIEMPO DOCENTE</div>
-            <div style="font-size: 0.74rem; color: var(--ink-muted);">CÁLCULO TRIMESTRAL ESTIMADO</div>
+            <div style="font-size: 0.74rem; color: var(--ink-muted);">ESTIMACIÓN TRIMESTRAL</div>
           </div>
 
           <div class="receipt-line">
@@ -1805,7 +1796,7 @@
             <strong id="rc-entregas">168 entregas</strong>
           </div>
           <div class="receipt-line">
-            <span>Páginas de PDF inspeccionadas:</span>
+            <span>Páginas de PDF revisadas (~18/entrega):</span>
             <strong id="rc-paginas">~3.024 págs.</strong>
           </div>
           <div class="receipt-line">
@@ -1813,14 +1804,14 @@
             <strong id="rc-manual">42,0 horas</strong>
           </div>
           <div class="receipt-line">
-            <span>Tiempo revisando con Evaluario:</span>
+            <span>Supervisión del borrador en Evaluario:</span>
             <strong id="rc-eval" style="color: var(--teal);">9,2 horas</strong>
           </div>
 
           <div class="receipt-total">
             <div>
-              <div style="font-weight: 700; font-size: 0.85rem;">TIEMPO AHORRADO:</div>
-              <div style="font-size: 0.72rem; color: var(--ink-muted);" id="rc-domingos">Equivale a 8 tardes de domingo libres</div>
+              <div style="font-weight: 700; font-size: 0.85rem;">HORAS LIBERADAS:</div>
+              <div style="font-size: 0.72rem; color: var(--ink-muted);" id="rc-domingos">Equivale a ~8 tardes de corrección</div>
             </div>
             <div class="receipt-big-num" id="rc-ahorro">32,8 h</div>
           </div>
@@ -1828,53 +1819,51 @@
       </div>
     </section>
 
-    <!-- MODALIDADES PARA PROFESORES INDIVIDUALES Y DEPARTAMENTOS -->
-    <section class="plans-section reveal-on-scroll" id="licencias">
+    <!-- MODALIDADES DE PUESTA EN MARCHA (SIN PRECIOS INVENTADOS) -->
+    <section class="plans-section reveal-on-scroll" id="despliegue">
       <div class="section-header">
-        <span class="section-kicker">Modalidades de Lanzamiento · Mayo 2027</span>
-        <h2>Pensado tanto para un profesor individual como para todo el departamento</h2>
-        <p>Quienes se apunten en la lista de espera antes del lanzamiento contarán con un mes de prueba completa con sus propias prácticas y tarifa fundadora bloqueada.</p>
+        <span class="section-kicker">Puesta en Marcha y Servicios · Mayo 2027</span>
+        <h2>Dos formas de utilizar Evaluario sin que tus datos salgan del centro</h2>
+        <p>Como ningún dato de alumnos puede enviarse a nubes externas, ofrecemos la implantación adaptada tanto a un docente en su propio equipo como al servidor local de un departamento.</p>
       </div>
 
       <div class="plans-grid">
         <div class="plan-card">
           <div>
-            <span class="card-tab-number" style="background: var(--paper-warm);">LICENCIA DOCENTE INDIVIDUAL</span>
-            <h3 style="font-family: var(--font-serif); font-size: 1.55rem;">Cuaderno Personal</h3>
-            <div class="plan-price">9 € <span>/ mes · tarifa fundador</span></div>
-            <p style="font-size: 0.9rem; color: var(--ink-body); margin-bottom: 1.15rem;">
-              Ideal para profesores de FP que quieren recuperar sus tardes de corrección desde el primer día sin depender de trámites del centro.
+            <span class="card-tab-number" style="background: var(--paper-warm);">MODALIDAD 01 · EQUIPO DEL PROFESOR</span>
+            <h3 style="font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 0.6rem;">Instalación Docente Local</h3>
+            <p style="font-size: 0.91rem; color: var(--ink-body); margin-bottom: 1.15rem;">
+              Para profesores que quieren ejecutar Evaluario directamente en su portátil o equipo de trabajo mediante contenedores Docker listos para arrancar.
             </p>
             <ul class="check-bullets">
-              <li><strong>✓</strong> <span>Corrección ilimitada de memorias PDF y entregas SQL para tus grupos.</span></li>
-              <li><strong>✓</strong> <span>Detector privado de capturas compartidas entre alumnos.</span></li>
-              <li><strong>✓</strong> <span>Exportación directa de notas y comentarios para Moodle, Classroom o Séneca.</span></li>
+              <li><strong>✓</strong> <span>Interfaz web React + motor FastAPI y sandbox MySQL 8.4 en tu propio ordenador.</span></li>
+              <li><strong>✓</strong> <span>Conexión con modelos de visión locales (Ollama) sin coste por página analizada.</span></li>
+              <li><strong>✓</strong> <span>Asistencia de configuración inicial y actualizaciones del motor de corrección.</span></li>
             </ul>
           </div>
           <div style="margin-top: 1.5rem;">
-            <a href="#reserva" onclick="preselectPlan('Docente Individual')" class="btn-tactile btn-paper" style="width: 100%;">
-              Reservar plaza individual
+            <a href="#reserva" onclick="preselectPlan('Redes y Servicios (ASIR / SMR)')" class="btn-tactile btn-paper" style="width: 100%;">
+              Solicitar acceso docente individual
             </a>
           </div>
         </div>
 
         <div class="plan-card featured">
-          <span class="plan-ribbon">RECOMENDADO PARA IES Y CENTROS FP</span>
+          <span class="plan-ribbon">PARA DEPARTAMENTOS DE FP</span>
           <div>
-            <span class="card-tab-number" style="background: var(--teal-soft); color: var(--teal);">LICENCIA DE DEPARTAMENTO</span>
-            <h3 style="font-family: var(--font-serif); font-size: 1.55rem;">Departamento de Informática</h3>
-            <div class="plan-price">49 € <span>/ mes · hasta 12 docentes</span></div>
-            <p style="font-size: 0.9rem; color: var(--ink-body); margin-bottom: 1.15rem;">
-              Para departamentos de familia profesional de Informática y Comunicaciones que quieren compartir rúbricas y plantillas entre ciclos.
+            <span class="card-tab-number" style="background: var(--teal-soft); color: var(--teal);">MODALIDAD 02 · SERVIDOR DE DEPARTAMENTO</span>
+            <h3 style="font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 0.6rem;">Despliegue en Red Local del Centro</h3>
+            <p style="font-size: 0.91rem; color: var(--ink-body); margin-bottom: 1.15rem;">
+              Instalamos y dejamos configurado Evaluario en un servidor o equipo con GPU del departamento de Informática para que todos los profesores accedan desde la red del aula.
             </p>
             <ul class="check-bullets">
-              <li><strong>✓</strong> <span>Incluye hasta 12 profesores del departamento (SMR, ASIR, DAW y DAM).</span></li>
-              <li><strong>✓</strong> <span>Banco compartido de enunciados, rúbricas y juegos de pruebas SQL.</span></li>
-              <li><strong>✓</strong> <span>Despliegue local 100% en el propio centro y facturación oficial para secretaría.</span></li>
+              <li><strong>✓</strong> <span>Acceso desde el navegador para todo el profesorado de SMR, ASIR, DAW y DAM.</span></li>
+              <li><strong>✓</strong> <span>Aislamiento completo dentro de la red interna del instituto (cumplimiento estricto RGPD).</span></li>
+              <li><strong>✓</strong> <span>Puesta en marcha a medida, formación al departamento y soporte técnico directo.</span></li>
             </ul>
           </div>
           <div style="margin-top: 1.5rem;">
-            <a href="#reserva" onclick="preselectPlan('Departamento de Informática completo')" class="btn-tactile btn-teal" style="width: 100%;">
+            <a href="#reserva" onclick="preselectPlan('Despliegue en Departamento / Centro')" class="btn-tactile btn-teal" style="width: 100%;">
               Solicitar piloto para mi departamento
             </a>
           </div>
@@ -1885,70 +1874,70 @@
     <!-- PREGUNTAS FRECUENTES DE PROFESORES -->
     <section class="faq-section reveal-on-scroll">
       <div class="section-header">
-        <span class="section-kicker">Dudas Habituales</span>
-        <h2>Lo que todo profesor nos pregunta antes de probarlo</h2>
+        <span class="section-kicker">Preguntas Frecuentes</span>
+        <h2>Respuestas claras sobre privacidad y funcionamiento técnico</h2>
       </div>
 
       <div class="faq-item open">
         <button type="button" class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-          <span>¿Cumple con la protección de datos (RGPD) de los alumnos del centro?</span>
+          <span>¿Por qué cumple con el RGPD si utiliza inteligencia artificial y ejecución de código?</span>
           <span>+</span>
         </button>
         <div class="faq-a">
-          Sí al 100%. A diferencia de subir trabajos de alumnos a chats de internet, Evaluario procesa las entregas en tu propio entorno local sin entrenar modelos externos ni compartir nombres, correos ni calificaciones con terceros.
+          Porque todo el procesamiento ocurre en local: tanto el análisis visual de las memorias en PDF (mediante Ollama en tu equipo o servidor del centro) como la ejecución de consultas SQL (en un contenedor Docker con MySQL 8.4 sin red) funcionan sin enviar ningún documento ni nombre de alumno a servidores de terceros.
         </div>
       </div>
 
       <div class="faq-item">
         <button type="button" class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-          <span>¿Mis alumnos tienen que registrarse o cambiar la forma de entregar?</span>
+          <span>¿Qué ocurre si un alumno entrega un script SQL peligroso o con un bucle infinito?</span>
           <span>+</span>
         </button>
         <div class="faq-a">
-          No. Tus alumnos siguen subiendo su PDF o su archivo <code>.sql</code> a Moodle o Google Classroom exactamente igual que hoy. Tú descargas el lote en ZIP y lo sueltas en Evaluario.
+          Cada entrega SQL se ejecuta en un contenedor efímero con la red deshabilitada (<code>network_mode: none</code>), límite estricto de memoria RAM, cuota de CPU y tiempo máximo de ejecución. Al terminar la comprobación, el contenedor se destruye limpiamente.
         </div>
       </div>
 
       <div class="faq-item">
         <button type="button" class="faq-q" onclick="this.parentElement.classList.toggle('open')">
-          <span>¿Puedo cambiar cualquier nota o criterio si no estoy de acuerdo?</span>
+          <span>¿Evaluario pone la nota definitiva automáticamente?</span>
           <span>+</span>
         </button>
         <div class="faq-a">
-          Siempre. Evaluario nunca publica una nota por su cuenta: te entrega un borrador con las capturas recortadas y marcadas para que tú des el visto bueno o cambies cualquier burbuja con un solo clic.
+          No. Por diseño del sistema, toda calificación calculada es siempre una propuesta en borrador. El profesor dispone de las capturas recortadas, la página exacta y el resultado de las pruebas para confirmar o modificar cualquier punto antes de exportar las notas.
         </div>
       </div>
     </section>
 
-    <!-- BILLETE DE RESERVA PRIORITARIA + LISTA DE INSCRITOS EN VIVO -->
+    <!-- FORMULARIO FUNCIONAL + LISTA REAL DE INSCRITOS -->
     <section class="boarding-section reveal-on-scroll" id="reserva">
       <div class="boarding-pass">
         <div class="pass-main">
-          <span class="section-kicker">Lista Oficial de Acceso · Mayo 2027</span>
-          <h2 style="font-family: var(--font-serif); font-size: clamp(1.8rem, 3.2vw, 2.45rem); line-height: 1.15; margin-bottom: 0.55rem;">
-            Apúntate en la lista prioritaria de docentes y centros
+          <span class="section-kicker">Convocatoria de Lanzamiento · Mayo 2027</span>
+          <h2 style="font-family: var(--font-serif); font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.15; margin-bottom: 0.55rem;">
+            Apúntate en la lista de interés para probar Evaluario
           </h2>
-          <p style="color: var(--ink-body); font-size: 0.95rem; margin-bottom: 0.85rem;">
-            Rellena tus datos para quedar registrado directamente en el libro de reservas de mayo de 2027 y bloquear un mes de prueba gratuita con tus propias prácticas.
+          <p style="color: var(--ink-body); font-size: 0.94rem; margin-bottom: 0.85rem;">
+            Si eres docente de FP o jefe de departamento, déjanos tus datos para contactarte en la apertura del proyecto en mayo de 2027. Tu inscripción se envía en directo y queda anotada al instante en el registro de al lado.
           </p>
 
           <div style="font-family: var(--font-mono); font-size: 0.73rem; font-weight: 700; color: var(--ink-muted); text-transform: uppercase;">
-            1. Elige qué módulos o modalidad te interesa:
+            1. Selecciona qué módulos o modalidad te interesan:
           </div>
           <div class="specialty-chips" id="spec-container">
             <button type="button" class="spec-chip active" onclick="toggleSpec(this)">Redes y Servicios (ASIR / SMR)</button>
             <button type="button" class="spec-chip" onclick="toggleSpec(this)">Bases de Datos (SQL)</button>
-            <button type="button" class="spec-chip" onclick="toggleSpec(this)">Sistemas Operativos</button>
-            <button type="button" class="spec-chip" id="chip-depto" onclick="toggleSpec(this)">Departamento de Informática completo</button>
+            <button type="button" class="spec-chip" onclick="toggleSpec(this)">Exámenes en papel (OMR)</button>
+            <button type="button" class="spec-chip" onclick="toggleSpec(this)">Despliegue en Departamento / Centro</button>
           </div>
 
           <form id="waitlist-form" onsubmit="submitTeacherWaitlist(event)">
             <div class="form-grid">
-              <input type="text" id="teacher-name" class="paper-input" placeholder="Tu nombre (ej. Marta R. · Profesora FP)" required>
-              <input type="text" id="teacher-school" class="paper-input" placeholder="Centro o ciudad (ej. IES Triana · Sevilla)" required>
+              <input type="text" id="teacher-name" class="paper-input" placeholder="Tu nombre y cargo (ej. Carlos G. · Profesor ASIR)" required>
+              <input type="text" id="teacher-school" class="paper-input" placeholder="Centro educativo o localidad" required>
             </div>
             <div class="form-grid" style="grid-template-columns: 1.25fr 0.75fr; margin-bottom: 0;">
-              <input type="email" id="teacher-email" class="paper-input" placeholder="Tu correo profesional (nombre@centro.es)" required>
+              <input type="email" id="teacher-email" class="paper-input" placeholder="Tu correo de contacto" required>
               <button type="submit" class="btn-tactile btn-coral" id="submit-waitlist-btn">
                 ✍️ Apuntarme en la lista
               </button>
@@ -1958,38 +1947,38 @@
           <div class="stamped-confirmation" id="stamp-confirm">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
               <div>
-                <strong>✓ INSCRIPCIÓN SELLADA (<span id="conf-code">EVA-2027</span>):</strong> Ya apareces en el Libro Oficial de Reservas con el correo <span id="conf-mail" style="text-decoration: underline;"></span>.
+                <strong>✓ REGISTRO COMPLETADO (<span id="conf-code">EVA-2027</span>):</strong> Se ha enviado tu solicitud y se ha añadido a la lista con el correo <span id="conf-mail" style="text-decoration: underline;"></span>.
               </div>
               <button type="button" class="mini-btn" onclick="downloadTicketTxt()">
-                ⬇ Descargar mi resguardo
+                ⬇ Descargar resguardo (.TXT)
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Columna Derecha: Libro Oficial de Inscritos en Vivo -->
+        <!-- Columna Derecha: Lista Real de Solicitudes Registradas -->
         <div class="pass-stub">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-muted); text-transform: uppercase; font-weight: 700;">
-                LIBRO DE RESERVAS EN VIVO
+                LISTA DE INSCRIPCIONES
               </span>
               <span style="font-family: var(--font-mono); font-size: 0.74rem; background: var(--teal); color: #fff; padding: 0.15rem 0.55rem; border-radius: 99px; font-weight: 700;" id="waitlist-counter">
-                18 docentes apuntados
+                0 inscritos
               </span>
             </div>
 
             <div class="waitlist-ledger" id="waitlist-ledger">
-              <!-- Se rellena dinámicamente con los docentes inscritos -->
+              <!-- Solo muestra las inscripciones reales realizadas -->
             </div>
           </div>
 
           <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1.5px dashed var(--line-strong); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-muted);">
-              Registro persistente · Convocatoria 2027
-            </span>
-            <button type="button" class="mini-btn" onclick="exportWaitlistCsv()" title="Descargar lista de inscritos en formato Excel CSV">
+            <button type="button" class="mini-btn" onclick="exportWaitlistCsv()" id="btn-export-csv" title="Descargar las inscripciones registradas en un archivo CSV para Excel">
               📊 Exportar lista (.CSV)
+            </button>
+            <button type="button" class="mini-btn" onclick="clearWaitlistRegistry()" title="Vaciar las inscripciones guardadas en este navegador">
+              Limpiar lista local
             </button>
           </div>
         </div>
@@ -2001,17 +1990,17 @@
     <div class="footer-inner">
       <div style="display: flex; align-items: center; gap: 0.65rem;">
         <strong style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--ink-deep);">Evaluario</strong>
-        <span>· Cuaderno de pre-corrección asistida para profesorado de Formación Profesional</span>
+        <span>· Herramienta de pre-corrección asistida en local para profesorado de Informática</span>
       </div>
       <div style="font-family: var(--font-mono); font-size: 0.78rem;">
-        Privacidad total RGPD · Lanzamiento Oficial Mayo 2027
+        Ningún dato de alumnos sale del equipo · Lanzamiento Mayo 2027
       </div>
     </div>
   </footer>
 
   <script>
     // =========================================================================
-    // 1. PINTAR EN LA WEB CON DESVANECIMIENTO PROGRESIVO (ESTUCHE DEL PROFESOR)
+    // 1. PINTAR SOLO AL HACER CLIC EN UN LUGAR VACÍO (Y BORRADO POCO A POCO)
     // =========================================================================
     const canvas = document.getElementById('ink-canvas');
     const ctx = canvas.getContext('2d');
@@ -2026,17 +2015,16 @@
     resizeCanvas();
 
     const PEN_STYLES = {
-      red: { color: '#E03E52', width: 3.2, alpha: 0.92, isHighlighter: false },
-      teal: { color: '#0B7A6E', width: 3.2, alpha: 0.92, isHighlighter: false },
-      highlighter: { color: '#FACC15', width: 20, alpha: 0.42, isHighlighter: true }
+      red: { color: '#E03E52', width: 3.4, alpha: 0.92, isHighlighter: false },
+      teal: { color: '#0B7A6E', width: 3.4, alpha: 0.92, isHighlighter: false },
+      highlighter: { color: '#FACC15', width: 20, alpha: 0.45, isHighlighter: true }
     };
 
     let currentTool = 'red';
     let isDrawing = false;
     let activeStroke = null;
-    const strokes = []; // Trazos hechos por el usuario (en coordenadas de página)
-    const stamps = [];  // Sellos estampados por el usuario
-    const hoverTrail = []; // Rastro sutil al mover el ratón
+    const strokes = [];
+    const stamps = [];
 
     function selectPenTool(tool) {
       currentTool = tool;
@@ -2049,22 +2037,29 @@
     function clearAllInkNow() {
       strokes.length = 0;
       stamps.length = 0;
-      hoverTrail.length = 0;
     }
 
-    function isInteractiveElement(el) {
+    // Comprueba que el clic se haya hecho estrictamente en un lugar vacío del fondo de papel
+    function isEmptyPaperSpace(el) {
       if (!el) return false;
-      return Boolean(el.closest('button, a, input, textarea, select, label, .pen-dock, .omr-bubble, .student-row, .spec-chip'));
+      const blocked = el.closest(
+        'header, .top-ribbon, .pen-dock, .sunday-card, .steps-strip, .omr-sheet-frame, ' +
+        '.contrast-lab-box, .index-card, .receipt-workbench, .plan-card, .faq-item, ' +
+        '.boarding-pass, button, a, input, textarea, select, label, table, ' +
+        'h1, h2, h3, h4, p, ul, ol, li, span, strong, code, .stamp-tag, .draw-invite-banner, .trust-badges'
+      );
+      return !blocked;
     }
 
-    // Ocultar el aviso de ayuda tras el primer trazo o tras 9 segundos
     setTimeout(() => {
       const toast = document.getElementById('pen-toast');
       if (toast) toast.classList.add('hidden');
-    }, 9000);
+    }, 8500);
 
     window.addEventListener('mousedown', (e) => {
-      if (e.button !== 0 || isInteractiveElement(e.target)) return;
+      // Solo inicia el pintado si es clic izquierdo en un lugar vacío de la página
+      if (e.button !== 0 || !isEmptyPaperSpace(e.target)) return;
+
       const pageX = e.clientX + window.scrollX;
       const pageY = e.clientY + window.scrollY;
 
@@ -2072,12 +2067,12 @@
       if (toast) toast.classList.add('hidden');
 
       if (currentTool === 'stamp') {
-        const texts = ['¡APROBADO!', '✓ REVISADO', 'NOTA: 10,0', '¡MUY BIEN!'];
+        const texts = ['✓ REVISADO', 'BORRADOR OK', 'COMPROBADO'];
         stamps.push({
           x: pageX,
           y: pageY,
           text: texts[stamps.length % texts.length],
-          angle: (Math.random() * 16 - 8) * (Math.PI / 180),
+          angle: (Math.random() * 14 - 7) * (Math.PI / 180),
           born: performance.now()
         });
         return;
@@ -2092,30 +2087,18 @@
         width: cfg.width,
         baseAlpha: cfg.alpha,
         isHighlighter: cfg.isHighlighter,
-        born: performance.now(),
         lastUpdated: performance.now()
       };
       strokes.push(activeStroke);
     });
 
     window.addEventListener('mousemove', (e) => {
+      // Mientras no esté haciendo clic tras haber empezado en un lugar vacío, NO pinta nada
+      if (!isDrawing || !activeStroke) return;
       const pageX = e.clientX + window.scrollX;
       const pageY = e.clientY + window.scrollY;
-
-      if (isDrawing && activeStroke) {
-        activeStroke.points.push({ x: pageX, y: pageY });
-        activeStroke.lastUpdated = performance.now();
-      } else if (currentTool !== 'stamp') {
-        const cfg = PEN_STYLES[currentTool] || PEN_STYLES.red;
-        hoverTrail.push({
-          x: pageX,
-          y: pageY,
-          color: cfg.color,
-          isHighlighter: cfg.isHighlighter,
-          born: performance.now()
-        });
-        if (hoverTrail.length > 140) hoverTrail.shift();
-      }
+      activeStroke.points.push({ x: pageX, y: pageY });
+      activeStroke.lastUpdated = performance.now();
     });
 
     window.addEventListener('mouseup', () => {
@@ -2126,53 +2109,14 @@
       }
     });
 
-    // Soporte para pantallas táctiles y doble clic de sello
-    window.addEventListener('dblclick', (e) => {
-      if (isInteractiveElement(e.target)) return;
-      stamps.push({
-        x: e.clientX + window.scrollX,
-        y: e.clientY + window.scrollY,
-        text: '✓ VISTO BUENO',
-        angle: -0.08,
-        born: performance.now()
-      });
-    });
-
     function renderInkLoop(now) {
       ctx.clearRect(0, 0, cw, ch);
 
+      const HOLD_MS = 2800; // Permanece visible tras soltar el trazo
+      const FADE_MS = 4200; // Se va borrando poco a poco de forma progresiva
+
       ctx.save();
       ctx.translate(-window.scrollX, -window.scrollY);
-
-      // 1. Rastro de tinta al mover el ratón que se va borrando poco a poco (2,6 segundos)
-      const TRAIL_LIFE = 2600;
-      while (hoverTrail.length && now - hoverTrail[0].born > TRAIL_LIFE) {
-        hoverTrail.shift();
-      }
-      if (hoverTrail.length > 1) {
-        for (let i = 1; i < hoverTrail.length; i++) {
-          const p0 = hoverTrail[i - 1];
-          const p1 = hoverTrail[i];
-          if (p1.born - p0.born > 180) continue; // Evitar saltos si el ratón salió de la ventana
-          const age = now - p1.born;
-          const lifeRatio = Math.max(0, 1 - age / TRAIL_LIFE);
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y);
-          ctx.lineTo(p1.x, p1.y);
-          ctx.strokeStyle = p1.color;
-          ctx.globalAlpha = (p1.isHighlighter ? 0.28 : 0.48) * lifeRatio;
-          ctx.lineWidth = p1.isHighlighter ? 12 * lifeRatio : 2.4 * lifeRatio;
-          ctx.lineCap = 'round';
-          if (p1.isHighlighter) ctx.globalCompositeOperation = 'multiply';
-          ctx.stroke();
-          ctx.restore();
-        }
-      }
-
-      // 2. Trazos fuertes al hacer clic y arrastrar (duran más y se desvanecen poco a poco)
-      const HOLD_MS = 3800;
-      const FADE_MS = 4500;
 
       for (let i = strokes.length - 1; i >= 0; i--) {
         const s = strokes[i];
@@ -2216,7 +2160,6 @@
         ctx.restore();
       }
 
-      // 3. Dibujar sellos estampados que también se borran poco a poco
       for (let i = stamps.length - 1; i >= 0; i--) {
         const st = stamps[i];
         const age = now - st.born;
@@ -2234,7 +2177,7 @@
         ctx.globalAlpha = Math.max(0, 0.9 * fadeFactor);
         ctx.strokeStyle = '#E03E52';
         ctx.lineWidth = 2.5;
-        ctx.fillStyle = 'rgba(250, 247, 242, 0.9)';
+        ctx.fillStyle = 'rgba(250, 247, 242, 0.92)';
         ctx.font = '700 13px "JetBrains Mono", monospace';
         const tw = ctx.measureText(st.text).width + 20;
         ctx.fillRect(-tw / 2, -16, tw, 32);
@@ -2263,13 +2206,13 @@
       if (mode === 'without') {
         btnWithout.classList.add('active');
         btnWith.classList.remove('active');
-        stamp.textContent = 'AGOTAMIENTO DOCENTE';
+        stamp.textContent = 'CORRECCIÓN MANUAL';
         stamp.style.borderColor = '#6E7681';
         stamp.style.color = '#6E7681';
         content.innerHTML = `
           <div class="scene-time">
             <span style="color: var(--coral);">DOMINGO · 20:45 H</span>
-            <span style="background: var(--coral-soft); color: var(--coral); padding: 0.15rem 0.5rem; border-radius: 4px;">4 HORAS Y MEDIA</span>
+            <span style="background: var(--coral-soft); color: var(--coral); padding: 0.15rem 0.5rem; border-radius: 4px;">REVISIÓN A MANO</span>
           </div>
           <p style="font-family: var(--font-serif); font-size: 1.22rem; font-weight: 600;">
             30 pestañas de PDF abiertas buscando IPs diminutas a ojo
@@ -2277,19 +2220,19 @@
           <ul class="scene-list">
             <li>
               <span style="color: var(--coral); font-weight: 700;">✕</span>
-              <span>Hacer zoom al 300% en cada captura de VirtualBox para ver si puso la máscara bien.</span>
+              <span>Hacer zoom en cada captura de máquina virtual para comprobar si puso la máscara correcta.</span>
             </li>
             <li>
               <span style="color: var(--coral); font-weight: 700;">✕</span>
-              <span>Quedarte con la duda de si la captura del alumno 18 es la misma que viste hace media hora.</span>
+              <span>No poder detectar a simple vista si dos alumnos han entregado capturas con la misma dirección MAC.</span>
             </li>
             <li>
               <span style="color: var(--coral); font-weight: 700;">✕</span>
-              <span>Escribir y repetir el mismo comentario de retroalimentación veinte veces seguidas.</span>
+              <span>Ejecutar y limpiar a mano base de datos por base de datos para probar cada entrega SQL.</span>
             </li>
             <li>
               <span style="color: var(--coral); font-weight: 700;">✕</span>
-              <span>Terminar el domingo de noche con la vista cansada y otra práctica pendiente.</span>
+              <span>Redactar desde cero el mismo comentario de corrección decenas de veces.</span>
             </li>
           </ul>`;
       } else {
@@ -2301,122 +2244,122 @@
         content.innerHTML = `
           <div class="scene-time">
             <span style="color: var(--teal);">DOMINGO · 17:20 H</span>
-            <span style="background: var(--teal-soft); color: var(--teal); padding: 0.15rem 0.5rem; border-radius: 4px;">18 MINUTOS EN TOTAL</span>
+            <span style="background: var(--teal-soft); color: var(--teal); padding: 0.15rem 0.5rem; border-radius: 4px;">FLUJO ASISTIDO</span>
           </div>
           <p style="font-family: var(--font-serif); font-size: 1.22rem; font-weight: 600;">
-            30 memorias de DHCP pre-corregidas y listas para tu visto bueno
+            30 memorias de DHCP pre-revisadas en tu propio equipo
           </p>
           <ul class="scene-list">
             <li>
               <span style="color: var(--teal); font-weight: 700;">01</span>
-              <span>Arrastras el ZIP descargado de Classroom o Moodle directamente a la hoja.</span>
+              <span>Subes el PDF de tu enunciado y ajustas la lista de comprobaciones sugerida.</span>
             </li>
             <li>
               <span style="color: var(--teal); font-weight: 700;">02</span>
-              <span>Evaluario localiza en qué página y captura está cada IP, máscara y comando.</span>
+              <span>Sueltas los PDFs o archivos <code>.sql</code> de la clase y Evaluario localiza cada evidencia.</span>
             </li>
             <li>
               <span style="color: var(--teal); font-weight: 700;">03</span>
-              <span>Te avisa en privado si dos alumnos han entregado capturas de la misma máquina virtual.</span>
+              <span>Te muestra un aviso privado si dos entregas comparten dirección MAC, UUID o reloj exacto.</span>
             </li>
             <li>
               <span style="color: var(--teal); font-weight: 700;">04</span>
-              <span>Revisas solo los puntos dudosos, ajustas lo que quieras y descargas el Excel de notas.</span>
+              <span>Revisas los puntos dudosos, cambias cualquier nota con un clic y exportas el CSV/Excel.</span>
             </li>
           </ul>`;
       }
     }
 
     // =========================================================================
-    // 3. PUPITRE INTERACTIVO DE CORRECCIÓN EN VIVO
+    // 3. PUPITRE INTERACTIVO DE CORRECCIÓN EN VIVO (DATOS REALES DE DEMO)
     // =========================================================================
     const datasets = {
       redes: {
-        headers: ['Alumno/a (Grupo 2.º)', 'P1 · Subred', 'P2 · Rango', 'P3 · Router', 'P4 · DNS', 'P5 · Cliente', 'Propuesta'],
+        headers: ['Entrega (Grupo ASIR)', 'P1 · Subred {N}', 'P2 · Rango DHCP', 'P3 · Gateway', 'P4 · DNS', 'P5 · Cliente', 'Borrador'],
         students: [
           {
-            name: 'Lucía Gómez (07)',
+            name: 'Alumno 07 · Memoria DHCP',
             copyWarning: false,
             page: 'INSPECCIÓN DE ENTREGA · PÁGINA 6 DEL PDF',
             bubbles: ['ok', 'ok', 'ok', 'doubt', 'ok'],
-            capture: `<span class="capture-tag">CAPTURA LEÍDA · PÁG. 6 · /etc/dhcp/dhcpd.conf</span>
+            capture: `<span class="capture-tag">EVIDENCIA EXTRAÍDA · PÁG. 6 · /etc/dhcp/dhcpd.conf</span>
 <div>subnet <span class="ink-highlight">192.168.107.0</span> netmask <span class="ink-highlight">255.255.255.0</span> {</div>
 <div>&nbsp;&nbsp;range <span class="ink-highlight">192.168.107.50 192.168.107.150</span>;</div>
 <div>&nbsp;&nbsp;option routers <span class="ink-highlight">192.168.107.1</span>;</div>
 <div>&nbsp;&nbsp;option domain-name-servers <span class="ink-amber">8.8.4.4</span>;</div>
 <div>}</div>`,
-            feedback: 'Subred 192.168.107.0/24, rango .50-.150 y concesión en cliente correctos. Revisar P4: se configuró DNS externo (8.8.4.4) en lugar del DNS interno del aula.'
+            feedback: 'Subred 192.168.107.0/24, rango .50-.150 y concesión en cliente verificados. Revisar P4: se configuró DNS externo (8.8.4.4) en lugar del DNS interno pedido.'
           },
           {
-            name: 'Carlos Ruiz (12)',
+            name: 'Alumno 12 · Memoria DHCP',
             copyWarning: true,
-            page: 'PÁGINA 9 DEL PDF · AVISO DE COINCIDENCIA',
+            page: 'PÁGINA 9 DEL PDF · ALERTA DE COINCIDENCIA TÉCNICA',
             bubbles: ['ok', 'ok', 'ok', 'ok', 'ok'],
-            capture: `<span class="capture-tag" style="background:var(--amber);">INDICIO SOLO PARA TI · COMPARACIÓN CON ALUMNO 19</span>
+            capture: `<span class="capture-tag" style="background:var(--amber);">AVISO SOLO PARA EL DOCENTE · COINCIDE CON ALUMNO 19</span>
 <div>link/ether <span class="ink-amber">08:00:27:c4:91:e2</span> brd ff:ff:ff:ff:ff:ff</div>
 <div>inet <span class="ink-highlight">192.168.112.50/24</span> scope global dynamic</div>
-<div>valid_lft 3541sec · Hora en barra: <span class="ink-amber">18:42:53</span></div>`,
-            feedback: 'Aviso privado para el docente: Comparte dirección MAC exacta (08:00:27:c4:91:e2) y marca de tiempo (18:42:53) únicamente con la entrega de Marcos Vega (19).'
+<div>valid_lft 3541sec · Reloj de captura: <span class="ink-amber">18:42:53</span></div>`,
+            feedback: 'Aviso privado para el profesor: Se ha detectado la misma dirección MAC (08:00:27:c4:91:e2) y marca de tiempo (18:42:53) que en la entrega del Alumno 19.'
           },
           {
-            name: 'Elena Martín (15)',
+            name: 'Alumno 15 · Memoria DHCP',
             copyWarning: false,
             page: 'INSPECCIÓN DE ENTREGA · PÁGINA 4 DEL PDF',
             bubbles: ['ok', 'miss', 'ok', 'ok', 'miss'],
-            capture: `<span class="capture-tag" style="background:var(--coral);">CAPTURA LEÍDA · PÁG. 4 · RANGO INCOMPLETO</span>
+            capture: `<span class="capture-tag" style="background:var(--coral);">EVIDENCIA EXTRAÍDA · PÁG. 4 · RANGO DIFERENTE</span>
 <div>subnet <span class="ink-highlight">192.168.115.0</span> netmask 255.255.255.0 {</div>
-<div>&nbsp;&nbsp;range <span class="ink-amber">192.168.115.10 192.168.115.20</span>; # Pedía .50 a .150</div>
+<div>&nbsp;&nbsp;range <span class="ink-amber">192.168.115.10 192.168.115.20</span>; # Enunciado: .50 a .150</div>
 <div>&nbsp;&nbsp;option routers <span class="ink-highlight">192.168.115.1</span>;</div>
 <div>}</div>`,
-            feedback: 'Subred y puerta de enlace correctas. El rango configurado (.10 a .20) no coincide con el enunciado (.50 a .150) y falta la captura de concesión en el cliente.'
+            feedback: 'Subred 192.168.115.0 y puerta de enlace correctas. El rango configurado (.10 a .20) no coincide con el pedido (.50 a .150) y no se localiza la captura del cliente.'
           },
           {
-            name: 'Marcos Vega (19)',
+            name: 'Alumno 19 · Memoria DHCP',
             copyWarning: true,
-            page: 'PÁGINA 11 DEL PDF · AVISO DE COINCIDENCIA',
+            page: 'PÁGINA 11 DEL PDF · ALERTA DE COINCIDENCIA TÉCNICA',
             bubbles: ['ok', 'ok', 'ok', 'ok', 'doubt'],
-            capture: `<span class="capture-tag" style="background:var(--amber);">INDICIO SOLO PARA TI · COMPARACIÓN CON ALUMNO 12</span>
+            capture: `<span class="capture-tag" style="background:var(--amber);">AVISO SOLO PARA EL DOCENTE · COINCIDE CON ALUMNO 12</span>
 <div>link/ether <span class="ink-amber">08:00:27:c4:91:e2</span> brd ff:ff:ff:ff:ff:ff</div>
-<div>Hora del sistema en captura: <span class="ink-amber">18:42:53</span></div>`,
-            feedback: 'Aviso privado para el docente: La captura del cliente en la página 11 muestra la misma dirección física MAC que la entrega de Carlos Ruiz (12).'
+<div>Reloj del sistema en captura: <span class="ink-amber">18:42:53</span></div>`,
+            feedback: 'Aviso privado para el profesor: La captura de la interfaz de red en la página 11 contiene exactamente la misma dirección física MAC que la entrega del Alumno 12.'
           }
         ]
       },
       sql: {
-        headers: ['Alumno/a (1.º BBDD)', 'Ej.1 · Tablas DDL', 'Ej.2 · Claves FK', 'Ej.3 · SELECT JOIN', 'Ej.4 · Datos Límite', 'Ej.5 · UPDATE', 'Propuesta'],
+        headers: ['Entrega (Módulo BBDD)', 'Ej.1 · Tablas DDL', 'Ej.2 · Claves FK', 'Ej.3 · SELECT JOIN', 'Ej.4 · Datos Límite', 'Ej.5 · UPDATE', 'Borrador'],
         students: [
           {
-            name: 'Pablo Serrano (03)',
+            name: 'Alumno 03 · practica_tienda.sql',
             copyWarning: false,
-            page: 'EJECUCIÓN EN SANDBOX · Alumno03.sql',
+            page: 'SANDBOX DOCKER MYSQL 8.4 · practica_tienda.sql',
             bubbles: ['ok', 'ok', 'ok', 'doubt', 'ok'],
-            capture: `<span class="capture-tag">RESULTADO EN MOTOR SQL · EJERCICIO 4</span>
+            capture: `<span class="capture-tag">EJECUCIÓN AISLADA · PRUEBA CON DATOS OCULTOS</span>
 <div>SELECT nombre, precio FROM productos WHERE <span class="ink-amber">precio &gt; 100</span>;</div>
-<div style="color:#94a3b8; margin-top:4px;">• Con los datos básicos del enunciado devuelve las 3 filas esperadas.</div>
-<div style="color:#fde68a;">• Al probar con fila límite (precio = 100 €) falla porque el enunciado pedía &gt;= 100.</div>`,
-            feedback: 'Estructura de tablas, claves foráneas y actualización correctas. En el ejercicio 4 usaste > 100 en lugar de >= 100.'
+<div style="color:#94a3b8; margin-top:4px;">• Datos básicos del enunciado: Coincide (devuelve 3 filas).</div>
+<div style="color:#fde68a;">• Datos límite ocultos (precio = 100): No incluye el valor frontera (&gt;= 100).</div>`,
+            feedback: 'Creación de tablas, claves foráneas y sentencia UPDATE correctas. En la consulta 4 se utilizó > 100 en lugar de >= 100 al comprobar con el juego de datos límite.'
           },
           {
-            name: 'Sara Molina (08)',
+            name: 'Alumno 08 · practica_tienda.sql',
             copyWarning: false,
-            page: 'EJECUCIÓN EN SANDBOX · Alumno08.sql',
+            page: 'SANDBOX DOCKER MYSQL 8.4 · practica_tienda.sql',
             bubbles: ['ok', 'ok', 'ok', 'ok', 'ok'],
-            capture: `<span class="capture-tag">RESULTADO EN MOTOR SQL · TODOS LOS CASOS SUPERADOS</span>
+            capture: `<span class="capture-tag">EJECUCIÓN AISLADA · BATERÍA COMPLETA SUPERADA</span>
 <div>SELECT p.nombre, f.nombre FROM productos p</div>
 <div>JOIN fabricantes f ON p.id_fabricante = f.id</div>
 <div>WHERE <span class="ink-highlight">p.precio &gt;= 100 ORDER BY p.precio DESC</span>;</div>`,
-            feedback: 'Práctica impecable. Supera tanto el juego de datos del enunciado como todas las pruebas con valores límite.'
+            feedback: 'Supera tanto las comprobaciones con los datos del enunciado como el lote de pruebas con valores límite y claves foráneas.'
           },
           {
-            name: 'David Castro (14)',
+            name: 'Alumno 14 · practica_tienda.sql',
             copyWarning: false,
-            page: 'AGRUPACIÓN DE CRITERIO · 6 ALUMNOS IGUALES',
+            page: 'CLÚSTER DE RESULTADO EQUIVALENTE · 4 ENTREGAS IGUALES',
             bubbles: ['ok', 'ok', 'doubt', 'ok', 'miss'],
-            capture: `<span class="capture-tag" style="background:var(--amber);">AGRUPADO · FALTA CLÁUSULA ORDER BY</span>
+            capture: `<span class="capture-tag" style="background:var(--amber);">AGRUPADO POR SALIDA IDÉNTICA · SIN ORDER BY</span>
 <div>SELECT nombre, salario FROM empleados WHERE depto = 20;</div>
-<div style="color:#fde68a; margin-top:4px;">• Devuelve las filas correctas pero sin ordenar por salario.</div>
-<div style="color:#94a3b8;">• Calibrado junto a otros 5 compañeros con el mismo caso.</div>`,
-            feedback: 'Tablas y filtros correctos. En el ejercicio 3 faltó ordenar el resultado con ORDER BY; en el ejercicio 5 el UPDATE modificó filas de más por omitir el WHERE.'
+<div style="color:#fde68a; margin-top:4px;">• Devuelve los registros esperados pero sin ordenar por salario.</div>
+<div style="color:#94a3b8;">• Agrupado para aplicar el mismo criterio de puntuación de una vez.</div>`,
+            feedback: 'Tablas y filtros correctos. En el ejercicio 3 faltó la cláusula ORDER BY; en el ejercicio 5 la sentencia UPDATE carece de condición WHERE.'
           }
         ]
       }
@@ -2445,7 +2388,7 @@
         let cellsHtml = `<td>
           <span class="sync-mark"></span>
           <span>${st.name}</span>
-          ${st.copyWarning ? '<span class="copy-pill" title="Ver coincidencia detectada">⚠ Coincidencia</span>' : ''}
+          ${st.copyWarning ? '<span class="copy-pill" title="Indicio técnico detectado">⚠ Coincidencia</span>' : ''}
         </td>`;
 
         st.bubbles.forEach((bState, bIdx) => {
@@ -2493,9 +2436,9 @@
         navigator.clipboard.writeText(st.feedback);
       }
       const btn = document.getElementById('btn-copy-fb');
-      btn.textContent = '✓ ¡Comentario copiado al portapapeles!';
+      btn.textContent = '✓ ¡Copiado al portapapeles!';
       setTimeout(() => {
-        btn.textContent = '📋 Copiar comentario para el alumno';
+        btn.textContent = '📋 Copiar retroalimentación';
       }, 2000);
     }
 
@@ -2505,7 +2448,7 @@
       document.getElementById('insp-name').textContent = st.name;
       document.getElementById('insp-grade').textContent = calcStudentScore(st.bubbles);
       document.getElementById('insp-capture').innerHTML = st.capture;
-      document.getElementById('insp-feedback').innerHTML = '<strong>Observación propuesta:</strong> ' + st.feedback;
+      document.getElementById('insp-feedback').innerHTML = '<strong>Observación en borrador:</strong> ' + st.feedback;
     }
 
     function switchSubject(subj) {
@@ -2537,7 +2480,7 @@
     function toggleLensEnhance(btn) {
       const sample = document.getElementById('lens-sample');
       const active = sample.classList.toggle('enhanced');
-      btn.textContent = active ? '✓ Captura enfocada (Restaurar original)' : '🔍 Probar enfoque automático';
+      btn.textContent = active ? '✓ Captura enfocada (Ver original)' : '🔍 Ver efecto del pre-procesado';
     }
 
     renderSheet();
@@ -2566,34 +2509,24 @@
       document.getElementById('rc-manual').textContent = `${horasManual.toFixed(1).replace('.', ',')} horas`;
       document.getElementById('rc-eval').textContent = `${horasEval.toFixed(1).replace('.', ',')} horas`;
       document.getElementById('rc-ahorro').textContent = `${ahorro.toFixed(1).replace('.', ',')} h`;
-      document.getElementById('rc-domingos').textContent = `Equivale a ${tardes} tardes de domingo libres`;
+      document.getElementById('rc-domingos').textContent = `Equivale a ~${tardes} tardes de corrección`;
     }
     calcReceipt();
 
     // =========================================================================
-    // 5. FORMULARIO FUNCIONAL Y LIBRO DE REGISTRO DE LISTA DE ESPERA EN VIVO
+    // 5. FORMULARIO Y LISTA DE INSCRIPCIONES REALES (CERO DATOS INVENTADOS)
     // =========================================================================
-    const STORAGE_KEY = 'evaluario_waitlist_registry_v1';
-    const INITIAL_WAITLIST = [
-      { id: 'EVA-2027-101', name: 'Javier M.', school: 'IES Alixar · Sevilla', specs: 'Redes y Servicios', email: 'j***m@iesalixar.es', date: 'Inscrito' },
-      { id: 'EVA-2027-104', name: 'Carmen L.', school: 'IES Polígono Sur · Sevilla', specs: 'Bases de Datos (SQL)', email: 'c***l@educa.es', date: 'Inscrita' },
-      { id: 'EVA-2027-109', name: 'Antonio G.', school: 'CIFP Virgen de Gracia', specs: 'Departamento de Informática', email: 'a***g@cifp.es', date: 'Inscrito' },
-      { id: 'EVA-2027-115', name: 'Laura S.', school: 'IES Martínez Montañés', specs: 'Sistemas Operativos', email: 'l***s@docente.es', date: 'Inscrita' }
-    ];
-
+    const STORAGE_KEY = 'evaluario_real_waitlist_v2';
     let lastRegisteredTicket = null;
 
     function loadWaitlist() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_WAITLIST));
-          return [...INITIAL_WAITLIST];
-        }
+        if (!raw) return [];
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) && parsed.length ? parsed : [...INITIAL_WAITLIST];
+        return Array.isArray(parsed) ? parsed : [];
       } catch (err) {
-        return [...INITIAL_WAITLIST];
+        return [];
       }
     }
 
@@ -2601,7 +2534,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       } catch (err) {
-        // Ignorar errores de almacenamiento privado
+        // Ignorar si el navegador bloquea localStorage
       }
     }
 
@@ -2617,16 +2550,27 @@
       const list = loadWaitlist();
       const ledger = document.getElementById('waitlist-ledger');
       const counter = document.getElementById('waitlist-counter');
-      const baseCount = 14 + list.length;
-      counter.textContent = `${baseCount} docentes apuntados`;
+      counter.textContent = list.length === 1 ? '1 inscrito' : `${list.length} inscritos`;
+
+      if (list.length === 0) {
+        ledger.innerHTML = `
+          <div style="padding: 1.4rem 0.6rem; text-align: center; color: var(--ink-muted); font-size: 0.82rem;">
+            <div style="font-family: var(--font-mono); font-weight: 700; color: var(--ink-body); margin-bottom: 0.35rem;">
+              Lista lista para recibir inscripciones
+            </div>
+            <div>Rellena el formulario de la izquierda para apuntarte y ver cómo se registra tu solicitud al instante en esta lista.</div>
+          </div>
+        `;
+        return;
+      }
 
       ledger.innerHTML = list.slice().reverse().map((item, idx) => {
-        const plazaNum = baseCount - idx;
+        const num = list.length - idx;
         return `
           <div class="ledger-entry">
             <div>
-              <div style="display:flex; align-items:center; gap:0.4rem;">
-                <span class="ledger-num">Plaza #${plazaNum}</span>
+              <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+                <span class="ledger-num">#${num}</span>
                 <strong>${item.name}</strong>
                 <span style="color:var(--ink-muted);">· ${item.school}</span>
               </div>
@@ -2650,7 +2594,7 @@
     function preselectPlan(planName) {
       const chips = document.querySelectorAll('#spec-container .spec-chip');
       chips.forEach(c => {
-        if (c.textContent.includes(planName) || (planName.includes('Individual') && c.textContent.includes('Redes'))) {
+        if (c.textContent.includes(planName)) {
           c.classList.add('active');
         }
       });
@@ -2674,10 +2618,12 @@
       const selectedSpecs = Array.from(document.querySelectorAll('#spec-container .spec-chip.active'))
         .map(b => b.textContent.trim());
       const specsText = selectedSpecs.length ? selectedSpecs.join(', ') : 'Informática FP';
-      const code = 'EVA-2027-' + Math.floor(120 + Math.random() * 870);
+      const nowStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const list = loadWaitlist();
+      const code = 'EVA-2027-' + String(list.length + 1).padStart(3, '0');
 
       btn.disabled = true;
-      btn.textContent = 'Sellando plaza...';
+      btn.textContent = 'Registrando...';
 
       const newEntry = {
         id: code,
@@ -2686,15 +2632,14 @@
         specs: specsText,
         email: maskEmail(email),
         rawEmail: email,
-        date: 'Ahora mismo'
+        date: nowStr
       };
 
-      const list = loadWaitlist();
       list.push(newEntry);
       saveWaitlist(list);
       lastRegisteredTicket = newEntry;
 
-      // Enviar registro en segundo plano por AJAX sin abrir gestor de correo externo
+      // Envío real por AJAX a tu correo sin abrir gestor externo
       try {
         await fetch('https://formsubmit.co/ajax/sergirrogar@gmail.com', {
           method: 'POST',
@@ -2703,17 +2648,17 @@
             'Accept': 'application/json'
           },
           body: JSON.stringify({
-            _subject: `Nueva reserva Evaluario (${code}) - ${name}`,
-            codigo_reserva: code,
+            _subject: `Nueva solicitud Evaluario (${code}) - ${name}`,
+            codigo_registro: code,
             docente: name,
-            centro_ciudad: school,
+            centro_localidad: school,
             correo: email,
-            especialidades: specsText,
-            convocatoria: 'Mayo 2027'
+            modulos_interes: specsText,
+            fecha: nowStr
           })
         });
       } catch (err) {
-        // Incluso sin conexión, queda guardado en el Libro de Reservas local
+        // Queda registrado igualmente en la lista local exportable
       }
 
       renderWaitlistLedger();
@@ -2726,7 +2671,7 @@
       btn.textContent = '✓ ¡Apuntado en la lista!';
       setTimeout(() => {
         btn.textContent = '✍️ Apuntarme en la lista';
-      }, 3000);
+      }, 2800);
 
       nameInput.value = '';
       schoolInput.value = '';
@@ -2738,14 +2683,14 @@
       if (!t) return;
       const content = [
         '====================================================',
-        '   RESGUARDO OFICIAL DE RESERVA · EVALUARIO 2027    ',
+        '   RESGUARDO DE INSCRIPCIÓN · EVALUARIO MAYO 2027   ',
         '====================================================',
-        `Código de invitación : ${t.id}`,
+        `Código de registro   : ${t.id}`,
+        `Fecha                : ${t.date}`,
         `Docente              : ${t.name}`,
-        `Centro / Ciudad      : ${t.school}`,
-        `Módulos / Interés    : ${t.specs}`,
-        'Beneficio bloqueado  : 1 mes de prueba completa + Tarifa Fundador',
-        'Convocatoria         : Lanzamiento Oficial Mayo 2027',
+        `Centro / Localidad   : ${t.school}`,
+        `Módulos de interés   : ${t.specs}`,
+        `Correo registrado    : ${t.rawEmail || t.email}`,
         '===================================================='
       ].join('\r\n');
 
@@ -2760,17 +2705,21 @@
 
     function exportWaitlistCsv() {
       const list = loadWaitlist();
+      if (!list.length) {
+        alert('Aún no hay inscripciones en la lista. Añade primero una desde el formulario.');
+        return;
+      }
       const rows = [
-        ['Codigo', 'Docente', 'Centro_Ciudad', 'Especialidades', 'Correo_Registrado', 'Estado']
+        ['Codigo', 'Fecha', 'Docente', 'Centro_Localidad', 'Modulos_Interes', 'Correo']
       ];
       list.forEach(item => {
         rows.push([
           item.id,
+          item.date,
           `"${(item.name || '').replace(/"/g, '""')}"`,
           `"${(item.school || '').replace(/"/g, '""')}"`,
           `"${(item.specs || '').replace(/"/g, '""')}"`,
-          item.rawEmail || item.email,
-          item.date
+          item.rawEmail || item.email
         ]);
       });
       const csvContent = '\uFEFF' + rows.map(r => r.join(';')).join('\r\n');
@@ -2778,9 +2727,15 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'lista-inscritos-evaluario-2027.csv';
+      a.download = 'lista-inscripciones-evaluario.csv';
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    function clearWaitlistRegistry() {
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById('stamp-confirm').style.display = 'none';
+      renderWaitlistLedger();
     }
 
     renderWaitlistLedger();
