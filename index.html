@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evaluario · Ingeniería de Pre-Corrección Local para FP</title>
-  <meta name="description" content="Plataforma de pre-corrección determinista de memorias de Redes y scripts SQL para profesorado de Formación Profesional. 100% local, sin IA en la nube y a coste cero.">
+  <title>Evaluario · Recupera tus tardes corrigiendo prácticas de FP</title>
+  <meta name="description" content="El asistente de pre-corrección para profesores de Informática. Lee memorias de redes y prácticas de bases de datos en segundos desde tu propio navegador, con privacidad total.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-deep: #05070a;
-      --bg-surface: #0b0f17;
-      --bg-elevated: #111724;
-      --bg-glass: rgba(14, 20, 32, 0.72);
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-strong: rgba(255, 255, 255, 0.14);
-      --border-highlight: rgba(16, 185, 129, 0.45);
-      --text-main: #f3f6fc;
-      --text-secondary: #94a3b8;
-      --text-DIM: #64748b;
-      --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.22);
-      --cyan: #06b6d4;
-      --cyan-glow: rgba(6, 182, 212, 0.22);
-      --amber: #f59e0b;
-      --amber-glow: rgba(245, 158, 11, 0.2);
-      --rose: #f43f5e;
-      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --paper-bg: #FAF7F2;
+      --paper-warm: #F3EFE6;
+      --paper-card: #FFFFFF;
+      --paper-tint: #FDFBF7;
+      --ink-deep: #14171A;
+      --ink-body: #3B4148;
+      --ink-muted: #6E7681;
+      --line-grid: rgba(20, 23, 26, 0.075);
+      --line-strong: rgba(20, 23, 26, 0.16);
+      --line-heavy: #14171A;
+      --coral: #E03E52;
+      --coral-soft: rgba(224, 62, 82, 0.11);
+      --teal: #0B7A6E;
+      --teal-soft: rgba(11, 122, 110, 0.12);
+      --amber: #D97706;
+      --amber-soft: rgba(217, 119, 6, 0.14);
+      --cobalt: #1D4ED8;
+      --font-serif: 'Fraunces', Georgia, serif;
       --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --spring: cubic-bezier(0.22, 1.35, 0.36, 1);
+      --smooth: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * {
@@ -41,351 +42,452 @@
 
     html {
       scroll-behavior: smooth;
-      background-color: var(--bg-deep);
-      color: var(--text-main);
+      background-color: var(--paper-bg);
+      color: var(--ink-deep);
       font-family: var(--font-sans);
-      selection-background-color: var(--emerald);
     }
 
     ::selection {
-      background: rgba(16, 185, 129, 0.3);
-      color: #ffffff;
+      background: rgba(224, 62, 82, 0.2);
+      color: var(--ink-deep);
     }
 
     body {
-      background-color: var(--bg-deep);
+      background-color: var(--paper-bg);
+      background-image:
+        linear-gradient(to right, var(--line-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--line-grid) 1px, transparent 1px);
+      background-size: 36px 36px;
       overflow-x: hidden;
-      position: relative;
       line-height: 1.6;
+      position: relative;
     }
 
-    /* Fondo interactivo de ingeniería y partículas */
-    #bg-canvas {
+    /* Lienzo de trazos de tinta interactivos */
+    #ink-canvas {
       position: fixed;
       inset: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 0;
       pointer-events: none;
-      opacity: 0.65;
+      z-index: 1;
     }
 
-    .ambient-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(130px);
-      pointer-events: none;
-      z-index: 0;
-      transition: transform 0.8s var(--ease-out-expo);
-    }
-
-    .orb-1 {
-      width: 580px;
-      height: 580px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.13) 0%, transparent 70%);
-      top: -180px;
-      left: -120px;
-    }
-
-    .orb-2 {
-      width: 520px;
-      height: 520px;
-      background: radial-gradient(circle, rgba(6, 182, 212, 0.11) 0%, transparent 70%);
-      top: 25%;
-      right: -160px;
-    }
-
-    .orb-3 {
-      width: 640px;
-      height: 640px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.07) 0%, transparent 70%);
-      bottom: -200px;
-      left: 25%;
-    }
-
-    /* Barra superior de telemetría */
-    .telemetry-bar {
+    /* Cinta superior estilo marcapáginas editorial */
+    .top-ribbon {
       position: relative;
       z-index: 30;
-      background: rgba(8, 12, 19, 0.9);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.45rem 1.5rem;
+      background: var(--ink-deep);
+      color: var(--paper-bg);
+      padding: 0.55rem 1.5rem;
       font-family: var(--font-mono);
-      font-size: 0.74rem;
-      color: var(--text-secondary);
+      font-size: 0.76rem;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .telemetry-group {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-    }
-
-    .status-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      color: var(--emerald);
-      font-weight: 600;
-    }
-
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--emerald);
-      box-shadow: 0 0 10px var(--emerald);
-      animation: pulseGlow 2s infinite;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.35); opacity: 0.55; }
-    }
-
-    /* Navegación flotante */
-    header.navbar-wrapper {
-      position: sticky;
-      top: 14px;
-      z-index: 50;
-      padding: 0 1.25rem;
-      margin-top: 14px;
-    }
-
-    nav.navbar {
-      max-width: 1180px;
-      margin: 0 auto;
-      background: rgba(11, 15, 23, 0.78);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border-strong);
-      border-radius: 14px;
-      padding: 0.75rem 1.35rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--text-main);
-    }
-
-    .brand-mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
-      border: 1px solid var(--emerald);
-      display: grid;
-      place-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .brand-mark::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
-      transform: translateX(-100%);
-      animation: laserSweep 3.6s infinite;
-    }
-
-    @keyframes laserSweep {
-      0% { transform: translateX(-100%); }
-      50%, 100% { transform: translateX(100%); }
-    }
-
-    .brand-name {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .brand-tag {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--cyan);
-      border: 1px solid rgba(6, 182, 212, 0.25);
-    }
-
-    .nav-links {
-      display: flex;
+      justify-content: center;
       align-items: center;
       gap: 1.5rem;
+      flex-wrap: wrap;
+      letter-spacing: 0.02em;
     }
 
-    .nav-links a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 500;
-      transition: color 0.2s;
+    .ribbon-pill {
+      background: var(--coral);
+      color: #fff;
+      font-weight: 700;
+      padding: 0.12rem 0.55rem;
+      border-radius: 3px;
+      font-size: 0.68rem;
+      text-transform: uppercase;
     }
 
-    .nav-links a:hover {
-      color: var(--text-main);
+    /* Cabecera estilo estudio editorial con pestañas de archivador */
+    header.editorial-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 2px solid var(--ink-deep);
     }
 
-    .nav-actions {
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--ink-deep);
     }
 
-    .btn {
+    .omr-symbol {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 5px 8px;
+      border: 1.5px solid var(--ink-deep);
+      border-radius: 999px;
+      background: var(--paper-card);
+      box-shadow: 2px 2px 0 var(--ink-deep);
+      transition: transform 0.2s var(--spring);
+    }
+
+    .brand-logo:hover .omr-symbol {
+      transform: rotate(-4deg) scale(1.05);
+    }
+
+    .omr-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .omr-dot.filled { background: var(--teal); border: 1.5px solid var(--ink-deep); }
+    .omr-dot.crossed { background: var(--coral); border: 1.5px solid var(--ink-deep); }
+    .omr-dot.amber { background: var(--amber); border: 1.5px dashed var(--ink-deep); }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .binder-tabs {
+      display: flex;
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    .binder-tab {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink-body);
+      text-decoration: none;
+      padding: 0.45rem 0.9rem;
+      border: 1.5px solid transparent;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .binder-tab:hover {
+      background: var(--paper-card);
+      border-color: var(--ink-deep);
+      box-shadow: 2px 2px 0 var(--ink-deep);
+      transform: translate(-1px, -1px);
+    }
+
+    .btn- tactile {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
       font-family: var(--font-sans);
-      font-weight: 600;
-      font-size: 0.88rem;
-      padding: 0.6rem 1.15rem;
-      border-radius: 9px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.65rem 1.25rem;
+      border: 2px solid var(--ink-deep);
+      border-radius: 8px;
       text-decoration: none;
       cursor: pointer;
-      transition: all 0.25s var(--ease-out-expo);
-      border: 1px solid transparent;
-      position: relative;
-      overflow: hidden;
+      transition: transform 0.18s var(--spring), box-shadow 0.18s var(--spring), background 0.18s;
     }
 
-    .btn-ghost {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
-      border-color: var(--border-strong);
+    .btn-coral {
+      background: var(--coral);
+      color: #ffffff;
+      box-shadow: 4px 4px 0 var(--ink-deep);
     }
 
-    .btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: var(--cyan);
-      transform: translateY(-1px);
+    .btn-coral:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink-deep);
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
-      color: #03110b;
-      font-weight: 700;
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+    .btn-coral:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--ink-deep);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 35px rgba(16, 185, 129, 0.55);
-      filter: brightness(1.06);
+    .btn-paper {
+      background: var(--paper-card);
+      color: var(--ink-deep);
+      box-shadow: 4px 4px 0 var(--ink-deep);
     }
 
-    /* Contenedor general */
+    .btn-paper:hover {
+      background: var(--paper-warm);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink-deep);
+    }
+
     .container {
-      max-width: 1200px;
+      max-width: 1220px;
       margin: 0 auto;
       padding: 0 1.5rem;
       position: relative;
       z-index: 10;
     }
 
-    /* HERO PRINCIPAL */
-    .hero {
-      padding: 4.5rem 0 3.5rem;
+    /* HERO EDITORIAL ASIMÉTRICO */
+    .hero-editorial {
+      padding: 4rem 0 3.5rem;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .stamp-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--teal);
+      background: var(--teal-soft);
+      border: 1.5px solid var(--teal);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1.35rem;
+      transform: rotate(-1deg);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.45rem, 4.7vw, 4.1rem);
+      line-height: 1.08;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.35rem;
+      color: var(--ink-deep);
+    }
+
+    .hand-circle {
+      position: relative;
+      display: inline-block;
+      color: var(--coral);
+      font-style: italic;
+      padding: 0 0.2rem;
+    }
+
+    .hand-circle svg {
+      position: absolute;
+      inset: -8px -12px;
+      width: calc(100% + 24px);
+      height: calc(100% + 16px);
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .hand-circle path {
+      stroke-dasharray: 420;
+      stroke-dashoffset: 420;
+      animation: drawPenLoop 1.4s 0.4s var(--smooth) forwards;
+    }
+
+    @keyframes drawPenLoop {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .hero-subtitle {
+      font-size: 1.16rem;
+      color: var(--ink-body);
+      margin-bottom: 2rem;
+      max-width: 580px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .trust-badges {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding-top: 1.25rem;
+      border-top: 1.5px dashed var(--line-strong);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+
+    .trust-badges span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Tarjeta de Domingo del Profesor (Comparador en el Hero Derecho) */
+    .sunday-card {
+      background: var(--paper-card);
+      border: 2px solid var(--ink-deep);
+      border-radius: 14px;
+      box-shadow: 10px 10px 0 var(--ink-deep);
+      padding: 1.65rem;
+      position: relative;
+    }
+
+    .corner-reg {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--ink-deep);
+    }
+    .corner-reg.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+    .corner-reg.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+    .corner-reg.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+    .corner-reg.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+    .rubber-stamp {
+      position: absolute;
+      top: -16px;
+      right: 18px;
+      background: var(--paper-bg);
+      border: 2.5px solid var(--coral);
+      color: var(--coral);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 4px;
+      transform: rotate(5deg);
+      box-shadow: 2px 2px 0 rgba(224, 62, 82, 0.25);
+      letter-spacing: 0.06em;
+      animation: stampSlam 0.6s 0.3s var(--spring) backwards;
+    }
+
+    @keyframes stampSlam {
+      from { transform: scale(2.4) rotate(18deg); opacity: 0; }
+      to { transform: scale(1) rotate(5deg); opacity: 1; }
+    }
+
+    .sunday-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1.5px solid var(--ink-deep);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      background: var(--paper-warm);
+    }
+
+    .sunday-btn {
+      border: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.65rem 0.5rem;
+      cursor: pointer;
+      color: var(--ink-body);
+      transition: all 0.2s;
+    }
+
+    .sunday-btn.active {
+      background: var(--ink-deep);
+      color: var(--paper-card);
+    }
+
+    .sunday-scene {
+      background: var(--paper-tint);
+      border: 1.5px solid var(--line-strong);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .scene-time {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .scene-list {
+      list-style: none;
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+      font-size: 0.9rem;
+    }
+
+    .scene-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.55rem 0.7rem;
+      border-radius: 6px;
+      background: var(--paper-card);
+      border: 1px solid var(--line-strong);
+    }
+
+    /* PUPITRE INTERACTIVO DE CORRECCIÓN EN VIVO */
+    .desk-section {
+      padding: 2rem 0 5rem;
+    }
+
+    .section-header {
+      max-width: 760px;
+      margin: 0 auto 2.5rem;
       text-align: center;
     }
 
-    .launch-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.32);
-      padding: 0.38rem 0.95rem 0.38rem 0.5rem;
-      border-radius: 999px;
+    .section-kicker {
       font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--text-main);
-      margin-bottom: 1.6rem;
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.12);
-    }
-
-    .launch-pill-badge {
-      background: var(--emerald);
-      color: #04130d;
+      font-size: 0.76rem;
       font-weight: 700;
-      padding: 0.15rem 0.55rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--coral);
+      display: inline-block;
+      margin-bottom: 0.45rem;
     }
 
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.4rem, 5.4vw, 4.35rem);
-      font-weight: 700;
-      line-height: 1.07;
-      letter-spacing: -0.035em;
-      max-width: 960px;
-      margin: 0 auto 1.35rem;
+    .section-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.8vw, 2.9rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
     }
 
-    .gradient-word {
-      background: linear-gradient(90deg, #34d399 0%, #22d3ee 55%, #f59e0b 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .section-header p {
+      color: var(--ink-body);
+      font-size: 1.06rem;
     }
 
-    .hero-lead {
-      font-size: clamp(1.05rem, 1.8vw, 1.22rem);
-      color: var(--text-secondary);
-      max-width: 740px;
-      margin: 0 auto 2.2rem;
-      font-weight: 400;
-    }
-
-    .hero-cta-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 3rem;
-    }
-
-    .btn-lg {
-      padding: 0.9rem 1.75rem;
-      font-size: 0.98rem;
-      border-radius: 11px;
-    }
-
-    /* ESTACIÓN DE SIMULACIÓN EN VIVO (HERO WORKBENCH) */
-    .workbench {
-      background: linear-gradient(180deg, rgba(17, 23, 36, 0.92) 0%, rgba(9, 13, 22, 0.96) 100%);
-      border: 1px solid var(--border-strong);
-      border-radius: 18px;
-      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(16, 185, 129, 0.12);
+    /* Hoja Física de Lectura Óptica */
+    .omr-sheet-frame {
+      background: var(--paper-card);
+      border: 2.5px solid var(--ink-deep);
+      border-radius: 16px;
+      box-shadow: 14px 14px 0 var(--ink-deep);
       overflow: hidden;
-      text-align: left;
-      margin-bottom: 4.5rem;
       position: relative;
     }
 
-    .workbench-header {
-      background: rgba(6, 9, 15, 0.9);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.85rem 1.25rem;
+    .sheet-topbar {
+      background: var(--paper-warm);
+      border-bottom: 2px solid var(--ink-deep);
+      padding: 1rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -393,1674 +495,1300 @@
       gap: 1rem;
     }
 
-    .window-controls {
+    .mode-pills {
       display: flex;
-      align-items: center;
       gap: 0.5rem;
-    }
-
-    .win-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-    }
-    .win-dot.red { background: #ef4444; }
-    .win-dot.amber { background: #f59e0b; }
-    .win-dot.green { background: #10b981; }
-
-    .workbench-tabs {
-      display: flex;
-      gap: 0.45rem;
-      background: rgba(255, 255, 255, 0.03);
-      padding: 0.28rem;
-      border-radius: 9px;
-      border: 1px solid var(--border-subtle);
       flex-wrap: wrap;
     }
 
-    .wb-tab {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 0.45rem 0.9rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-
-    .wb-tab.active {
-      background: var(--emerald);
-      color: #03120c;
-      box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
-    }
-
-    .wb-tab:not(.active):hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .workbench-status {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--cyan);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .wb-panel {
-      display: none;
-      padding: 1.6rem;
-      grid-template-columns: 1.05fr 1fr;
-      gap: 1.5rem;
-      align-items: stretch;
-    }
-
-    .wb-panel.active {
-      display: grid;
-      animation: fadeSlideIn 0.35s var(--ease-out-expo);
-    }
-
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Panel Izquierdo: Terminal / Captura simulada con haz láser OCR */
-    .terminal-box {
-      background: #05070b;
-      border: 1px solid var(--border-strong);
-      border-radius: 12px;
-      padding: 1.15rem;
+    .mode-pill {
       font-family: var(--font-mono);
       font-size: 0.8rem;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 7px;
+      border: 1.5px solid var(--ink-deep);
+      background: var(--paper-card);
+      color: var(--ink-deep);
+      cursor: pointer;
+      transition: all 0.18s var(--spring);
     }
 
-    .ocr-laser {
+    .mode-pill.active {
+      background: var(--teal);
+      color: #ffffff;
+      box-shadow: 3px 3px 0 var(--ink-deep);
+      transform: translate(-1px, -1px);
+    }
+
+    .scan-trigger-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.5rem 1.1rem;
+      border-radius: 7px;
+      border: 1.5px solid var(--ink-deep);
+      background: var(--coral);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--ink-deep);
+      transition: all 0.18s;
+    }
+
+    .scan-trigger-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink-deep);
+    }
+
+    .sheet-workbench {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      min-height: 450px;
+    }
+
+    /* Columna Izquierda: Tabla de Burbujas de la Clase */
+    .sheet-table-pane {
+      padding: 1.5rem;
+      border-right: 2px solid var(--ink-deep);
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .scanner-light-bar {
       position: absolute;
       left: 0;
       right: 0;
-      height: 46px;
-      background: linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.18) 85%, rgba(16, 185, 129, 0.85) 100%);
-      border-bottom: 2px solid var(--emerald);
-      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.45);
+      height: 44px;
+      background: linear-gradient(90deg, rgba(11, 122, 110, 0.08), rgba(11, 122, 110, 0.24), rgba(11, 122, 110, 0.08));
+      border-top: 2px solid var(--teal);
+      border-bottom: 2px solid var(--teal);
       pointer-events: none;
-      animation: scanVertical 4.2s ease-in-out infinite;
-      z-index: 4;
+      opacity: 0;
+      z-index: 5;
+      transition: top 0.35s var(--smooth), opacity 0.2s;
     }
 
-    @keyframes scanVertical {
-      0% { top: -46px; opacity: 0; }
-      10% { opacity: 1; }
-      85% { opacity: 1; }
-      100% { top: 100%; opacity: 0; }
+    .omr-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
     }
 
-    .term-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 0.65rem;
-      margin-bottom: 0.75rem;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-      color: var(--text-DIM);
+    .omr-table th {
+      font-family: var(--font-mono);
       font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--coral);
+      padding: 0.5rem 0.45rem;
+      border-bottom: 2px solid var(--coral);
+      text-align: center;
     }
 
-    .term-code {
-      line-height: 1.7;
-      color: #cbd5e1;
-      position: relative;
-      z-index: 2;
+    .omr-table th:first-child {
+      text-align: left;
     }
 
-    .hl-match {
-      background: rgba(16, 185, 129, 0.18);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.45);
-      padding: 0.08rem 0.35rem;
-      border-radius: 4px;
+    .student-row {
+      border-bottom: 1px solid rgba(224, 62, 82, 0.22);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .student-row:hover {
+      background: rgba(11, 122, 110, 0.05);
+    }
+
+    .student-row.selected {
+      background: rgba(11, 122, 110, 0.11);
+    }
+
+    .student-row td {
+      padding: 0.65rem 0.45rem;
+      text-align: center;
+      font-family: var(--font-mono);
+    }
+
+    .student-row td:first-child {
+      text-align: left;
+      font-family: var(--font-sans);
       font-weight: 600;
-      display: inline-block;
-      transition: all 0.25s;
-    }
-
-    .hl-warn {
-      background: rgba(245, 158, 11, 0.18);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.5);
-      padding: 0.08rem 0.35rem;
-      border-radius: 4px;
-      font-weight: 600;
-      display: inline-block;
-    }
-
-    .term-controls {
-      margin-top: 1.1rem;
-      padding-top: 0.85rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
       display: flex;
+      align-items: center;
       gap: 0.5rem;
-      flex-wrap: wrap;
     }
 
-    .chip-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-strong);
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
-      font-size: 0.73rem;
-      padding: 0.38rem 0.7rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
+    .sync-mark {
+      width: 12px;
+      height: 5px;
+      background: var(--ink-deep);
+      display: inline-block;
+      border-radius: 1px;
     }
 
-    .chip-btn:hover, .chip-btn.active {
-      background: rgba(6, 182, 212, 0.15);
-      color: var(--cyan);
-      border-color: var(--cyan);
+    .student-row.selected .sync-mark {
+      width: 18px;
+      background: var(--teal);
     }
 
-    /* Panel Derecho: Matriz de Evaluación Interactiva */
-    .eval-matrix {
-      background: rgba(8, 12, 20, 0.85);
-      border: 1px solid var(--border-strong);
-      border-radius: 12px;
-      padding: 1.15rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .matrix-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.85rem;
-    }
-
-    .matrix-title {
-      font-family: var(--font-display);
-      font-size: 0.98rem;
-      font-weight: 600;
-    }
-
-    .score-badge {
-      font-family: var(--font-mono);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--emerald);
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      padding: 0.25rem 0.75rem;
-      border-radius: 8px;
-    }
-
-    .check-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.6rem 0.75rem;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid var(--border-subtle);
-      margin-bottom: 0.5rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .check-row:hover {
-      border-color: var(--border-strong);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .check-info {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-size: 0.84rem;
-    }
-
-    .state-bubble {
-      width: 22px;
-      height: 22px;
+    /* Burbujas OMR Interactivas */
+    .omr-bubble {
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      display: grid;
+      display: inline-grid;
       place-items: center;
       font-family: var(--font-mono);
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      flex-shrink: 0;
-      transition: transform 0.2s var(--ease-out-expo);
+      cursor: pointer;
+      transition: transform 0.2s var(--spring);
+      user-select: none;
     }
 
-    .state-bubble.ok {
-      background: var(--emerald);
-      color: #03120c;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+    .omr-bubble:hover {
+      transform: scale(1.2);
     }
 
-    .state-bubble.review {
-      background: rgba(245, 158, 11, 0.15);
+    .omr-bubble.ok {
+      background: var(--teal);
+      color: #ffffff;
+      border: 1.5px solid var(--ink-deep);
+    }
+
+    .omr-bubble.miss {
+      background: var(--coral-soft);
+      color: var(--coral);
+      border: 1.5px solid var(--coral);
+    }
+
+    .omr-bubble.doubt {
+      background: var(--amber-soft);
       color: var(--amber);
       border: 2px dashed var(--amber);
     }
 
-    .state-bubble.miss {
-      background: rgba(244, 63, 94, 0.15);
-      color: var(--rose);
-      border: 1.5px solid var(--rose);
-    }
-
-    .check-weight {
+    .copy-pill {
       font-family: var(--font-mono);
-      font-size: 0.76rem;
-      color: var(--text-secondary);
+      font-size: 0.66rem;
+      background: var(--amber-soft);
+      color: #92400e;
+      border: 1px solid var(--amber);
+      padding: 0.1rem 0.38rem;
+      border-radius: 4px;
+      font-weight: 700;
     }
 
-    .matrix-footer {
-      margin-top: 0.75rem;
-      padding: 0.65rem 0.8rem;
-      border-radius: 8px;
-      background: rgba(245, 158, 11, 0.09);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      font-size: 0.78rem;
-      color: #fcd34d;
+    /* Columna Derecha: Evidencia Encontrada y Nota Propuesta */
+    .sheet-inspector-pane {
+      padding: 1.5rem;
+      background: var(--paper-tint);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .inspector-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
+      align-items: flex-start;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1.5px dashed var(--line-strong);
+      margin-bottom: 1rem;
     }
 
-    /* CINTA DE ESPECIFICACIONES EN MOVIMIENTO (TICKER) */
-    .ticker-wrap {
-      border-top: 1px solid var(--border-subtle);
-      border-bottom: 1px solid var(--border-subtle);
-      background: rgba(8, 11, 18, 0.8);
-      overflow: hidden;
-      padding: 0.9rem 0;
-      margin-bottom: 5rem;
-      position: relative;
-      z-index: 10;
-    }
-
-    .ticker-track {
-      display: flex;
-      width: max-content;
-      animation: scrollTicker 32s linear infinite;
-      gap: 3rem;
-    }
-
-    .ticker-item {
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      white-space: nowrap;
-    }
-
-    .ticker-item strong {
-      color: var(--text-main);
-    }
-
-    @keyframes scrollTicker {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    /* ENCABEZADOS DE SECCIÓN */
-    .section-head {
+    .grade-stamp-box {
+      border: 2px solid var(--coral);
+      background: #fff;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
       text-align: center;
-      max-width: 760px;
-      margin: 0 auto 3.2rem;
+      min-width: 110px;
+      box-shadow: 3px 3px 0 rgba(224, 62, 82, 0.2);
     }
 
-    .eyebrow {
+    .grade-stamp-label {
       font-family: var(--font-mono);
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--emerald);
-      margin-bottom: 0.6rem;
-      display: inline-block;
-    }
-
-    .section-head h2 {
-      font-family: var(--font-display);
-      font-size: clamp(1.85rem, 3.6vw, 2.75rem);
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      margin-bottom: 0.85rem;
-    }
-
-    .section-head p {
-      color: var(--text-secondary);
-      font-size: 1.05rem;
-    }
-
-    /* TARJETAS SPOTLIGHT 3D (BENTO GRID) */
-    .bento-grid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 1.35rem;
-      margin-bottom: 5.5rem;
-    }
-
-    .bento-card {
-      grid-column: span 4;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-strong);
-      border-radius: 16px;
-      padding: 1.85rem;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.28s var(--ease-out-expo), border-color 0.28s;
-    }
-
-    .bento-card.span-6 { grid-column: span 6; }
-    .bento-card.span-8 { grid-column: span 8; }
-
-    .bento-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(16, 185, 129, 0.11), transparent 40%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .bento-card:hover::before {
-      opacity: 1;
-    }
-
-    .bento-card:hover {
-      border-color: rgba(16, 185, 129, 0.45);
-      transform: translateY(-4px);
-    }
-
-    .card-kicker {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--cyan);
+      font-size: 0.64rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 0.55rem;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
+      color: var(--coral);
+      font-weight: 700;
     }
 
-    .bento-card h3 {
-      font-family: var(--font-display);
-      font-size: 1.32rem;
-      margin-bottom: 0.65rem;
-      color: var(--text-main);
+    .grade-stamp-val {
+      font-family: var(--font-mono);
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--ink-deep);
+      line-height: 1.1;
     }
 
-    .bento-card p {
-      color: var(--text-secondary);
-      font-size: 0.94rem;
+    .capture-preview {
+      background: #181B20;
+      color: #E2E8F0;
+      border: 2px solid var(--ink-deep);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.77rem;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .capture-tag {
+      display: inline-block;
+      background: var(--teal);
+      color: #fff;
+      font-size: 0.66rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 3px;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .ink-highlight {
+      background: rgba(16, 185, 129, 0.25);
+      border-bottom: 2px solid #34d399;
+      color: #6ee7b7;
+      padding: 0 0.25rem;
+    }
+
+    .ink-amber {
+      background: rgba(245, 158, 11, 0.28);
+      border-bottom: 2px dashed #fbbf24;
+      color: #fde68a;
+      padding: 0 0.25rem;
+    }
+
+    .feedback-card {
+      background: var(--paper-card);
+      border: 1.5px solid var(--ink-deep);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.84rem;
+      color: var(--ink-body);
+    }
+
+    /* SECCIÓN DE ESPECIALIDADES EN TARJETAS DE FICHERO (INDEX CARDS) */
+    .cards-section {
+      padding: 3rem 0 5rem;
+    }
+
+    .index-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+    }
+
+    .index-card {
+      background: var(--paper-card);
+      border: 2px solid var(--ink-deep);
+      border-radius: 14px;
+      padding: 2rem 1.75rem;
+      box-shadow: 8px 8px 0 var(--ink-deep);
+      position: relative;
+      transition: transform 0.22s var(--spring), box-shadow 0.22s var(--spring);
+    }
+
+    .index-card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 12px 12px 0 var(--ink-deep);
+    }
+
+    .card-tab-number {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border: 1.5px solid var(--ink-deep);
+      border-radius: 4px;
       margin-bottom: 1.1rem;
     }
 
-    .feature-list {
+    .index-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      line-height: 1.22;
+      margin-bottom: 0.75rem;
+    }
+
+    .index-card p {
+      color: var(--ink-body);
+      font-size: 0.95rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .check-bullets {
       list-style: none;
       display: grid;
-      gap: 0.48rem;
-      font-size: 0.88rem;
-      color: #cbd5e1;
-    }
-
-    .feature-list li {
-      display: flex;
-      align-items: center;
       gap: 0.55rem;
+      font-size: 0.88rem;
+      color: var(--ink-deep);
+      border-top: 1.5px dashed var(--line-strong);
+      padding-top: 1rem;
     }
 
-    .feature-list li::before {
-      content: "▸";
-      color: var(--emerald);
+    .check-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .check-bullets li strong {
+      color: var(--teal);
       font-family: var(--font-mono);
-      font-weight: bold;
     }
 
-    /* CALCULADORA INTERACTIVA DE AHORRO DOCENTE */
-    .calc-panel {
-      background: linear-gradient(135deg, rgba(14, 21, 35, 0.95), rgba(8, 12, 20, 0.98));
-      border: 1px solid var(--border-strong);
+    /* CALCULADORA DE TARDES Y DOMINGOS RECUPERADOS (CON TICKET PERFORADO) */
+    .receipt-section {
+      padding: 2rem 0 5.5rem;
+    }
+
+    .receipt-workbench {
+      background: var(--paper-warm);
+      border: 2.5px solid var(--ink-deep);
       border-radius: 18px;
-      padding: 2.4rem;
-      margin-bottom: 5.5rem;
+      padding: 2.5rem;
+      box-shadow: 12px 12px 0 var(--ink-deep);
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 2.5rem;
       align-items: center;
     }
 
-    .slider-group {
-      margin-bottom: 1.4rem;
+    .tactile-slider {
+      margin-bottom: 1.5rem;
+      background: var(--paper-card);
+      border: 1.5px solid var(--ink-deep);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
     }
 
-    .slider-label {
+    .tactile-slider-head {
       display: flex;
       justify-content: space-between;
-      font-size: 0.92rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.55rem;
     }
 
-    .slider-val {
+    .tactile-slider-val {
       font-family: var(--font-mono);
-      color: var(--emerald);
+      color: var(--coral);
+      background: var(--coral-soft);
+      padding: 0.1rem 0.55rem;
+      border-radius: 4px;
     }
 
-    input[type="range"] {
+    input[type="range"].paper-range {
       width: 100%;
-      accent-color: var(--emerald);
-      height: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 999px;
+      accent-color: var(--coral);
+      height: 8px;
       cursor: pointer;
     }
 
-    .calc-results {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    /* Ticket perforado de ahorro */
+    .paper-receipt {
+      background: #ffffff;
+      border: 2px solid var(--ink-deep);
+      border-top: 6px dashed var(--ink-deep);
+      border-bottom: 6px dashed var(--ink-deep);
+      padding: 1.85rem 1.6rem;
+      font-family: var(--font-mono);
+      box-shadow: 6px 6px 0 rgba(20, 23, 26, 0.14);
+      position: relative;
     }
 
-    .calc-box {
-      background: rgba(5, 7, 10, 0.75);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1.25rem;
+    .receipt-header {
       text-align: center;
+      border-bottom: 1.5px dashed var(--ink-deep);
+      padding-bottom: 0.9rem;
+      margin-bottom: 1rem;
     }
 
-    .calc-box.highlight {
-      grid-column: span 2;
-      border-color: rgba(16, 185, 129, 0.45);
-      background: rgba(16, 185, 129, 0.07);
+    .receipt-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      padding: 0.4rem 0;
+      color: var(--ink-body);
     }
 
-    .calc-number {
-      font-family: var(--font-mono);
-      font-size: 2.3rem;
+    .receipt-total {
+      margin-top: 0.9rem;
+      padding-top: 0.9rem;
+      border-top: 2px solid var(--ink-deep);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .receipt-big-num {
+      font-family: var(--font-serif);
+      font-size: 2.35rem;
       font-weight: 700;
-      color: var(--emerald);
-      line-height: 1.1;
-      margin-bottom: 0.3rem;
+      color: var(--teal);
     }
 
-    .calc-caption {
-      font-size: 0.83rem;
-      color: var(--text-secondary);
+    /* SECCIÓN DE INVITACIÓN Y RESERVA PARA CENTROS Y PROFESORES */
+    .boarding-section {
+      padding: 1rem 0 6rem;
     }
 
-    /* DIAGRAMA INTERACTIVO DE ARQUITECTURA E INFRAESTRUCTURA */
-    .arch-explorer {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-strong);
+    .boarding-pass {
+      background: var(--paper-card);
+      border: 2.5px solid var(--ink-deep);
       border-radius: 18px;
-      padding: 2rem;
-      margin-bottom: 5.5rem;
-    }
-
-    .arch-nodes {
+      box-shadow: 14px 14px 0 var(--ink-deep);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: 1.35fr 0.65fr;
+      overflow: hidden;
+      position: relative;
     }
 
-    .arch-node {
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid var(--border-strong);
-      border-radius: 12px;
-      padding: 1.15rem;
-      cursor: pointer;
-      transition: all 0.22s;
-      text-align: left;
+    .pass-main {
+      padding: 2.6rem;
+      border-right: 3px dashed var(--ink-deep);
+      position: relative;
     }
 
-    .arch-node.active, .arch-node:hover {
-      border-color: var(--cyan);
-      background: rgba(6, 182, 212, 0.09);
-      transform: translateY(-2px);
+    .pass-stub {
+      padding: 2.4rem 2rem;
+      background: var(--paper-warm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .arch-node-id {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--cyan);
-      margin-bottom: 0.35rem;
+    .specialty-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1rem 0 1.35rem;
     }
 
-    .arch-node-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 0.25rem;
-    }
-
-    .arch-node-tech {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .arch-detail-box {
-      background: #060910;
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1.5rem;
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 1.5rem;
-      align-items: center;
-    }
-
-    .arch-code {
+    .spec-chip {
       font-family: var(--font-mono);
       font-size: 0.78rem;
-      background: #030508;
-      border: 1px solid var(--border-subtle);
-      padding: 1rem;
-      border-radius: 8px;
-      color: #a7f3d0;
-      overflow-x: auto;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border: 1.5px solid var(--ink-deep);
+      border-radius: 6px;
+      background: var(--paper-bg);
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    /* HOJA DE RUTA / PLANIFICACIÓN (JIRA) */
-    .timeline-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.15rem;
-      margin-bottom: 5.5rem;
+    .spec-chip.active {
+      background: var(--ink-deep);
+      color: #ffffff;
     }
 
-    .phase-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 13px;
-      padding: 1.35rem;
-      position: relative;
-    }
-
-    .phase-card.done { border-top: 3px solid var(--emerald); }
-    .phase-card.current { border-top: 3px solid var(--cyan); box-shadow: 0 0 25px rgba(6, 182, 212, 0.12); }
-    .phase-card.upcoming { border-top: 3px solid var(--amber); }
-
-    .phase-meta {
+    .form-row {
       display: flex;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      margin-bottom: 0.55rem;
-      color: var(--text-secondary);
-    }
-
-    .phase-card h4 {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      margin-bottom: 0.45rem;
-    }
-
-    .phase-card p {
-      font-size: 0.86rem;
-      color: var(--text-secondary);
-    }
-
-    /* SECCIÓN DE LISTA DE ESPERA POR CORREO (LANZAMIENTO MAYO 2027) */
-    .waitlist-section {
-      background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 55%),
-                  linear-gradient(180deg, #0d1422 0%, #070a12 100%);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      border-radius: 22px;
-      padding: 3.2rem 2rem;
-      text-align: center;
-      margin-bottom: 5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .waitlist-form-box {
-      max-width: 620px;
-      margin: 1.8rem auto 0;
-      display: grid;
-      grid-template-columns: 1fr auto;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    .email-input {
-      background: rgba(5, 7, 10, 0.9);
-      border: 1px solid var(--border-strong);
-      border-radius: 10px;
-      padding: 0.95rem 1.2rem;
-      color: var(--text-main);
+    .paper-input {
+      flex: 1;
+      min-width: 240px;
+      padding: 0.9rem 1.1rem;
+      border: 2px solid var(--ink-deep);
+      border-radius: 8px;
       font-family: var(--font-sans);
       font-size: 0.96rem;
+      background: var(--paper-bg);
+      color: var(--ink-deep);
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    .email-input:focus {
-      border-color: var(--emerald);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    .paper-input:focus {
+      background: #ffffff;
+      box-shadow: 4px 4px 0 var(--teal);
     }
 
-    .pass-ticket {
+    .stamped-confirmation {
       display: none;
-      max-width: 540px;
-      margin: 1.6rem auto 0;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px dashed var(--emerald);
-      border-radius: 12px;
-      padding: 1.25rem;
+      margin-top: 1.25rem;
+      padding: 0.95rem 1.15rem;
+      border: 2px solid var(--teal);
+      background: var(--teal-soft);
+      border-radius: 8px;
       font-family: var(--font-mono);
-      font-size: 0.82rem;
-      text-align: left;
-      color: #d1fae5;
+      font-size: 0.83rem;
+      color: var(--ink-deep);
     }
 
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 3rem 1.5rem 4rem;
-      background: #040609;
-      position: relative;
-      z-index: 10;
+    /* Pie de página editorial */
+    footer.editorial-footer {
+      border-top: 2px solid var(--ink-deep);
+      background: var(--paper-warm);
+      padding: 2.5rem 1.5rem;
+      font-size: 0.88rem;
+      color: var(--ink-body);
     }
 
-    .footer-grid {
-      max-width: 1200px;
+    .footer-inner {
+      max-width: 1220px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
-    .footer-links {
-      display: flex;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.88rem;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: var(--emerald);
-    }
-
-    /* Animación de entrada por scroll */
-    .reveal {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 0.65s var(--ease-out-expo), transform 0.65s var(--ease-out-expo);
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (max-width: 960px) {
-      .wb-panel.active { grid-template-columns: 1fr; }
-      .bento-card, .bento-card.span-6, .bento-card.span-8 { grid-column: span 12; }
-      .calc-panel { grid-template-columns: 1fr; }
-      .arch-nodes { grid-template-columns: 1fr 1fr; }
-      .arch-detail-box { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-    }
-
-    @media (max-width: 600px) {
-      .waitlist-form-box { grid-template-columns: 1fr; }
-      .arch-nodes { grid-template-columns: 1fr; }
+    @media (max-width: 980px) {
+      .hero-editorial,
+      .sheet-workbench,
+      .index-cards-grid,
+      .receipt-workbench,
+      .boarding-pass {
+        grid-template-columns: 1fr;
+      }
+      .sheet-table-pane {
+        border-right: none;
+        border-bottom: 2px solid var(--ink-deep);
+      }
+      .pass-main {
+        border-right: none;
+        border-bottom: 3px dashed var(--ink-deep);
+      }
+      .binder-tabs { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Red de nodos interactiva de fondo -->
-  <canvas id="bg-canvas"></canvas>
-  <div class="ambient-orb orb-1"></div>
-  <div class="ambient-orb orb-2"></div>
-  <div class="ambient-orb orb-3"></div>
+  <canvas id="ink-canvas"></canvas>
 
-  <!-- Barra de telemetría en vivo -->
-  <div class="telemetry-bar">
-    <div class="telemetry-group">
-      <span class="status-indicator"><span class="pulse-dot"></span> MOTOR DETERMINISTA v0.20 ACTIVO</span>
-      <span>CSP: connect-src 'none' (0 BYTES ENVIADOS A LA NUBE)</span>
-      <span>TESTS: 190/190 EN VERDE (VITEST + PYTEST)</span>
-    </div>
-    <div class="telemetry-group">
-      <span>PROYECTO INTERMODULAR ASIR · I.E.S. TRIANA</span>
-    </div>
+  <!-- Cinta superior editorial -->
+  <div class="top-ribbon">
+    <span class="ribbon-pill">LANZAMIENTO MAYO 2027</span>
+    <span>Abierta la reserva de licencias docentes y pilotos para departamentos de FP de Informática</span>
+    <span>·</span>
+    <span>100% en tu navegador · Sin enviar datos de alumnos a internet</span>
   </div>
 
-  <!-- Navegación principal -->
-  <header class="navbar-wrapper">
-    <nav class="navbar">
-      <a href="#" class="brand">
-        <div class="brand-mark">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"></circle>
-            <circle cx="12" cy="12" r="4" fill="#10b981"></circle>
-          </svg>
+  <!-- Navegación con estética de cuaderno técnico -->
+  <header class="editorial-header">
+    <div class="header-inner">
+      <a href="#" class="brand-logo">
+        <div class="omr-symbol" aria-hidden="true">
+          <span class="omr-dot filled"></span>
+          <span class="omr-dot crossed"></span>
+          <span class="omr-dot amber"></span>
         </div>
-        <span class="brand-name">Evaluario</span>
-        <span class="brand-tag">LOCAL-FIRST</span>
+        <span class="brand-title">Evaluario</span>
       </a>
 
-      <div class="nav-links">
-        <a href="#simulador">Simulador en Vivo</a>
-        <a href="#modulos">Módulos</a>
-        <a href="#calculadora">Ahorro Docente</a>
-        <a href="#arquitectura">Arquitectura</a>
-        <a href="#planificacion">Planificación</a>
-      </div>
+      <nav class="binder-tabs">
+        <a href="#pupitre" class="binder-tab">01 · Pruébalo en vivo</a>
+        <a href="#modulos" class="binder-tab">02 · Qué corrige</a>
+        <a href="#calculadora" class="binder-tab">03 · Tu tiempo ahorrado</a>
+        <a href="#reserva" class="binder-tab">04 · Acceso Mayo 2027</a>
+      </nav>
 
-      <div class="nav-actions">
-        <a href="https://evaluario.atlassian.net" target="_blank" rel="noopener" class="btn btn-ghost">Tablero Jira</a>
-        <a href="#lanzamiento" class="btn btn-primary">Lista de Espera 2027</a>
-      </div>
-    </nav>
+      <a href="#reserva" class="btn-tactile btn-coral">Reservar mi plaza docente</a>
+    </div>
   </header>
 
   <main class="container">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="launch-pill">
-        <span class="launch-pill-badge">MAYO 2027</span>
-        <span>Lanzamiento comercial para centros y docentes de FP de Informática</span>
-      </div>
-
-      <h1>
-        Pre-corrección técnica de Redes y SQL <span class="gradient-word">sin subir ni un dato a la nube</span>
-      </h1>
-
-      <p class="hero-lead">
-        Evaluario lee memorias PDF con capturas de VirtualBox mediante OCR en WebAssembly y evalúa prácticas SQL en un contenedor MySQL en memoria RAM. Propone un borrador auditable al instante y el profesor decide siempre la nota final.
-      </p>
-
-      <div class="hero-cta-row">
-        <a href="#lanzamiento" class="btn btn-primary btn-lg">
-          Reservar plaza para el lanzamiento →
-        </a>
-        <a href="https://github.com/Piratapacorro/evaluario-lanzamiento" id="repo-btn-hero" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">
-          Explorar Repositorio en GitHub
-        </a>
-        <a href="https://evaluario.atlassian.net" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">
-          Ver Planificación en Jira (EVA)
-        </a>
-      </div>
-
-      <!-- ESTACIÓN INTERACTIVA EN VIVO -->
-      <div class="workbench" id="simulador">
-        <div class="workbench-header">
-          <div class="window-controls">
-            <span class="win-dot red"></span>
-            <span class="win-dot amber"></span>
-            <span class="win-dot green"></span>
-            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-left: 0.5rem;">
-              evaluario-engine://inspector-interactivo
-            </span>
-          </div>
-
-          <div class="workbench-tabs" role="tablist">
-            <button class="wb-tab active" onclick="switchWorkbench(0)" id="tab-btn-0">
-              01 · OCR Memorias de Redes (DHCP)
-            </button>
-            <button class="wb-tab" onclick="switchWorkbench(1)" id="tab-btn-1">
-              02 · Sandbox MySQL en RAM (.SQL)
-            </button>
-            <button class="wb-tab" onclick="switchWorkbench(2)" id="tab-btn-2">
-              03 · Radar Anti-Copia (Huellas MAC)
-            </button>
-          </div>
-
-          <div class="workbench-status" id="wb-status-text">
-            ● Escáner WASM listo · 0 conexiones externas
-          </div>
-        </div>
-
-        <!-- MODO 0: REDES Y CAPTURAS DHCP -->
-        <div class="wb-panel active" id="wb-panel-0">
-          <div class="terminal-box">
-            <div class="ocr-laser"></div>
-            <div>
-              <div class="term-top">
-                <span>CAPTURA EXTRAÍDA: Alumno_07_Practica4_DHCP.pdf (Pág. 6)</span>
-                <span style="color: var(--emerald);">Escalado OCR: 30px · Confianza: 94%</span>
-              </div>
-              <div class="term-code" id="dhcp-term-content">
-                <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
-                <div>ddns-update-style none;</div>
-                <div>default-lease-time <span class="hl-match">3600</span>; max-lease-time 7200;</div>
-                <div>authoritative;</div>
-                <div>subnet <span class="hl-match">192.168.107.0</span> netmask <span class="hl-match">255.255.255.0</span> {</div>
-                <div>&nbsp;&nbsp;range <span class="hl-match">192.168.107.50 192.168.107.150</span>;</div>
-                <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.107.1</span>;</div>
-                <div>&nbsp;&nbsp;option domain-name-servers <span class="hl-warn">8.8.4.4</span>;</div>
-                <div>}</div>
-                <div style="margin-top:0.45rem;">root@cliente-vb:~# <span style="color:#38bdf8;">ip -4 a show enp0s8</span></div>
-                <div>inet <span class="hl-match">192.168.107.51/24</span> brd 192.168.107.255 scope global dynamic</div>
-              </div>
-            </div>
-
-            <div class="term-controls">
-              <span style="font-size:0.72rem; color:var(--text-DIM); align-self:center; margin-right:0.3rem;">PROBAR ESCENARIO:</span>
-              <button class="chip-btn active" onclick="loadDhcpScenario('ok', this)">Entrega Correcta (Alumno 07)</button>
-              <button class="chip-btn" onclick="loadDhcpScenario('duda', this)">Captura Borrosa / Dudosa</button>
-              <button class="chip-btn" onclick="loadDhcpScenario('fallo', this)">Rango IP Incorrecto</button>
-            </div>
-          </div>
-
-          <div class="eval-matrix">
-            <div>
-              <div class="matrix-header">
-                <div>
-                  <div class="matrix-title">Hoja de Lectura Óptica · Práctica 4 DHCP</div>
-                  <div style="font-size: 0.76rem; color: var(--text-secondary);">Haz clic en cualquier punto para alternar la decisión del profesor</div>
-                </div>
-                <div class="score-badge" id="dhcp-score">8,5 / 10</div>
-              </div>
-
-              <div id="dhcp-checks-container">
-                <div class="check-row" onclick="toggleCheckRow(this, 2.5)">
-                  <div class="check-info">
-                    <span class="state-bubble ok">✓</span>
-                    <span>Subred <code>192.168.XX.0/24</code> con número del alumno (07)</span>
-                  </div>
-                  <span class="check-weight">2,5 pts · Pág. 6</span>
-                </div>
-
-                <div class="check-row" onclick="toggleCheckRow(this, 2.5)">
-                  <div class="check-info">
-                    <span class="state-bubble ok">✓</span>
-                    <span>Rango de concesión <code>.50</code> a <code>.150</code> activo en <code>dhcpd.conf</code></span>
-                  </div>
-                  <span class="check-weight">2,5 pts · Pág. 6</span>
-                </div>
-
-                <div class="check-row" onclick="toggleCheckRow(this, 2.0)">
-                  <div class="check-info">
-                    <span class="state-bubble ok">✓</span>
-                    <span>Puerta de enlace <code>option routers 192.168.107.1</code></span>
-                  </div>
-                  <span class="check-weight">2,0 pts · Pág. 6</span>
-                </div>
-
-                <div class="check-row" onclick="toggleCheckRow(this, 1.5)" data-state="review">
-                  <div class="check-info">
-                    <span class="state-bubble review">?</span>
-                    <span>Servidor DNS interno del aula (detectado <code>8.8.4.4</code>)</span>
-                  </div>
-                  <span class="check-weight">1,5 pts · Por revisar</span>
-                </div>
-
-                <div class="check-row" onclick="toggleCheckRow(this, 1.5)">
-                  <div class="check-info">
-                    <span class="state-bubble ok">✓</span>
-                    <span>Cliente recibe concesión dinámica en interfaz <code>enp0s8</code></span>
-                  </div>
-                  <span class="check-weight">1,5 pts · Pág. 6</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="matrix-footer">
-              <span>⚡ Borrador generado en 1,4 s sin conexión a internet</span>
-              <span style="font-family:var(--font-mono); font-weight:700;">DECIDE EL PROFESOR</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODO 1: SANDBOX MYSQL EN RAM -->
-        <div class="wb-panel" id="wb-panel-1">
-          <div class="terminal-box">
-            <div>
-              <div class="term-top">
-                <span>SANDBOX DOCKER: mysql:8.4 (127.0.0.1:3307 · tmpfs RAM 768M)</span>
-                <span style="color: var(--cyan);">--max-execution-time=5000</span>
-              </div>
-              <div class="term-code" id="sql-term-content">
-                <div style="color:#94a3b8;">-- Entrega: Alumno14.sql · Ejercicio 3 (SELECT)</div>
-                <div><span style="color:#38bdf8;">SELECT</span> p.nombre, p.precio, f.nombre <span style="color:#38bdf8;">AS</span> fabricante</div>
-                <div><span style="color:#38bdf8;">FROM</span> productos p</div>
-                <div><span style="color:#38bdf8;">JOIN</span> fabricantes f <span style="color:#38bdf8;">ON</span> p.id_fabricante = f.id</div>
-                <div><span style="color:#38bdf8;">WHERE</span> p.precio <span class="hl-warn">&gt; 100</span>; <span style="color:#f59e0b;">-- Enunciado pedía &gt;= 100</span></div>
-                <div style="margin-top:0.6rem; color:#34d399;">[MOTOR] Filas con datos.sql del enunciado: COINCIDE (3 filas)</div>
-                <div style="color:#fbbf24;">[DATOS_EXTRA] Probando fila límite inventada (precio = 100.00 €)...</div>
-                <div style="color:#f43f5e;">[ALERTA] Falla con datos_extra.sql: acertaba por casualidad.</div>
-              </div>
-            </div>
-
-            <div class="term-controls">
-              <span style="font-size:0.72rem; color:var(--text-DIM); align-self:center; margin-right:0.3rem;">SIMULAR CASO:</span>
-              <button class="chip-btn active" onclick="loadSqlScenario('casualidad', this)">Acierta por casualidad (&gt; vs &gt;=)</button>
-              <button class="chip-btn" onclick="loadSqlScenario('sinorden', this)">Olvida ORDER BY (8 alumnos)</button>
-              <button class="chip-btn" onclick="loadSqlScenario('hostil', this)">Intento LOAD DATA INFILE (Bloqueado)</button>
-            </div>
-          </div>
-
-          <div class="eval-matrix">
-            <div>
-              <div class="matrix-header">
-                <div>
-                  <div class="matrix-title">Calibración por Grupos de Fallo Idéntico</div>
-                  <div style="font-size: 0.76rem; color: var(--text-secondary);">Responde una sola vez y calibra a toda la clase en <code>rubrica.toml</code></div>
-                </div>
-                <div class="score-badge" id="sql-score">Calibrado</div>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble ok">✓</span>
-                  <span>Esquema DDL: Tablas, PK, FK, UNIQUE y tipos compatibles</span>
-                </div>
-                <span class="check-weight">100% verificado</span>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble review">!</span>
-                  <span>Fallo <code>datos.casualidad</code> (4 alumnos coinciden en este fallo)</span>
-                </div>
-                <span class="check-weight">50% provisional</span>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble review">!</span>
-                  <span>Fallo <code>select.sin_orden</code> (8 alumnos sin cláusula ORDER BY)</span>
-                </div>
-                <span class="check-weight">75% en rúbrica</span>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble ok">✓</span>
-                  <span>Aislamiento DML: Cada ejercicio parte del estado limpio canónico</span>
-                </div>
-                <span class="check-weight">tmpfs RAM</span>
-              </div>
-            </div>
-
-            <div class="matrix-footer">
-              <span>🛡️ Código hostil confinado: <code>--secure-file-priv=NULL</code></span>
-              <span style="font-family:var(--font-mono); font-weight:700;">96 TESTS PYTEST</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODO 2: RADAR ANTI-COPIA -->
-        <div class="wb-panel" id="wb-panel-2">
-          <div class="terminal-box">
-            <div>
-              <div class="term-top">
-                <span>ANÁLISIS CRUZADO DE HUELLAS DE MÁQUINA (D-045)</span>
-                <span style="color: var(--amber);">Umbral superado: Peso 4 ≥ 3</span>
-              </div>
-              <div class="term-code">
-                <div style="color:#94a3b8;"># Comparando texto OCR de toda la clase (24 entregas)...</div>
-                <div>• Descartado <code>10.0.2.15</code> (19 alumnos · NAT por defecto VirtualBox)</div>
-                <div>• Descartado <code>08:00:27</code> prefijo OUI común de VirtualBox</div>
-                <div style="margin-top:0.55rem; color:#fbbf24;">⚠ COINCIDENCIA EXCLUSIVA DETECTADA (Solo en 2 entregas):</div>
-                <div>&nbsp;&nbsp;├─ Entrega A: <span class="hl-warn">Alumno_04.pdf (Pág. 9)</span></div>
-                <div>&nbsp;&nbsp;├─ Entrega B: <span class="hl-warn">Alumno_19.pdf (Pág. 11)</span></div>
-                <div>&nbsp;&nbsp;├─ MAC exacta: <span class="hl-match">08:00:27:c4:91:e2</span> (+2 pts)</div>
-                <div>&nbsp;&nbsp;└─ Hora exacta: <span class="hl-match">18:42:53</span> (+2 pts)</div>
-              </div>
-            </div>
-            <div class="term-controls">
-              <span style="font-size:0.74rem; color:var(--text-secondary);">
-                Regla D-008: Es un indicio privado para revisión docente, nunca una sanción automática.
-              </span>
-            </div>
-          </div>
-
-          <div class="eval-matrix">
-            <div>
-              <div class="matrix-header">
-                <div>
-                  <div class="matrix-title">Por qué no comparamos imágenes píxel a píxel</div>
-                  <div style="font-size: 0.76rem; color: var(--text-secondary);">Ingeniería pensada para aulas de virtualización</div>
-                </div>
-                <div class="score-badge" style="color:var(--amber); border-color:var(--amber);">Indicio</div>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble ok">1</span>
-                  <span>Cero falsos positivos por usar la misma plantilla OVA del profesor</span>
-                </div>
-                <span class="check-weight">Filtro inteligente</span>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble ok">2</span>
-                  <span>Inmune a recortes, cambios de brillo o capturas re-escaladas</span>
-                </div>
-                <span class="check-weight">Huella en texto</span>
-              </div>
-
-              <div class="check-row">
-                <div class="check-info">
-                  <span class="state-bubble ok">3</span>
-                  <span>Botón directo «Ver al otro alumno» para inspección lado a lado</span>
-                </div>
-                <span class="check-weight">1 clic</span>
-              </div>
-            </div>
-
-            <div class="matrix-footer">
-              <span>🔍 Cumple estrictamente el Anexo III del EU AI Act</span>
-              <span style="font-family:var(--font-mono); font-weight:700;">SUPERVISIÓN HUMANA</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Cinta continua de ingeniería -->
-  <div class="ticker-wrap">
-    <div class="ticker-track">
-      <div class="ticker-item">⚡ <strong>SINGLE-FILE HTML</strong> · Funciona sin servidor y sin internet</div>
-      <div class="ticker-item">🔒 <strong>CSP CONNECT-SRC 'NONE'</strong> · Bloqueo físico de salida de datos</div>
-      <div class="ticker-item">🐳 <strong>MYSQL 8.4 EN RAM (TMPFS)</strong> · Limpieza instantánea tras cada alumno</div>
-      <div class="ticker-item">👁️ <strong>TESSERACT WASM SIMD</strong> · Preprocesado a 30px para terminales oscuras</div>
-      <div class="ticker-item">🔑 <strong>AES-256-GCM + PBKDF2 (600K)</strong> · Cifrado de extremo a extremo</div>
-      <div class="ticker-item">✅ <strong>190 PRUEBAS AUTOMATIZADAS</strong> · 94 Vitest + 96 Pytest</div>
-      <!-- Duplicado para bucle infinito fluido -->
-      <div class="ticker-item">⚡ <strong>SINGLE-FILE HTML</strong> · Funciona sin servidor y sin internet</div>
-      <div class="ticker-item">🔒 <strong>CSP CONNECT-SRC 'NONE'</strong> · Bloqueo físico de salida de datos</div>
-      <div class="ticker-item">🐳 <strong>MYSQL 8.4 EN RAM (TMPFS)</strong> · Limpieza instantánea tras cada alumno</div>
-      <div class="ticker-item">👁️ <strong>TESSERACT WASM SIMD</strong> · Preprocesado a 30px para terminales oscuras</div>
-      <div class="ticker-item">🔑 <strong>AES-256-GCM + PBKDF2 (600K)</strong> · Cifrado de extremo a extremo</div>
-      <div class="ticker-item">✅ <strong>190 PRUEBAS AUTOMATIZADAS</strong> · 94 Vitest + 96 Pytest</div>
-    </div>
-  </div>
-
-  <main class="container">
-    <!-- MÓDULOS Y CARACTERÍSTICAS (BENTO SPOTLIGHT) -->
-    <section id="modulos" class="reveal">
-      <div class="section-head">
-        <span class="eyebrow">Arquitectura de Producto</span>
-        <h2>Construido para resolver el cuello de botella real de la FP</h2>
-        <p>Un ecosistema completo para los ciclos de ASIR, SMR, DAW y DAM donde la máquina hace el trabajo mecánico y el profesor conserva el 100% del criterio académico.</p>
-      </div>
-
-      <div class="bento-grid" id="bento-container">
-        <div class="bento-card span-8">
-          <div class="card-kicker">01 · MÓDULO DE REDES Y SISTEMAS (ASIR / SMR)</div>
-          <h3>Lectura óptica de memorias en PDF con capturas de VirtualBox</h3>
-          <p>
-            Los alumnos entregan memorias de 30 o 40 páginas llenas de capturas de pantalla con letra pequeña sobre fondo negro. Evaluario descomprime el ZIP de Google Classroom en memoria, invierte el canal de mayor contraste, reescala cada línea a ~30 píxeles y eleva la tasa de detección del 68% al 93%.
-          </p>
-          <ul class="feature-list">
-            <li>Generación automática de listas de comprobación leyendo el enunciado del profesor (PDF, DOCX, ODT) sin usar IA.</li>
-            <li>Sustitución dinámica del número de alumno (<code>192.168.XX.1</code>, <code>red_nat_XX</code>) en cada regla.</li>
-            <li>Navegación instantánea: haz clic en una burbuja y salta a la página exacta del PDF con la captura resaltada.</li>
-          </ul>
-        </div>
-
-        <div class="bento-card span-4">
-          <div class="card-kicker">02 · PRIVACIDAD Y BLINDAJE LEGAL</div>
-          <h3>RGPD y EU AI Act por diseño</h3>
-          <p>
-            Los sistemas de evaluación educativa son clasificados como de Alto Riesgo en el Anexo III 3.b del Reglamento Europeo de IA.
-          </p>
-          <ul class="feature-list">
-            <li>Ningún nombre ni entrega sale jamás del navegador del docente.</li>
-            <li>Política <code>connect-src 'none'</code> verificable en el inspector del navegador.</li>
-            <li>Sin alucinaciones: la misma entrega recibe siempre la misma propuesta.</li>
-          </ul>
-        </div>
-
-        <div class="bento-card span-4">
-          <div class="card-kicker">03 · GESTIÓN POR NIVELES</div>
-          <h3>Cuadernos heredados y copia automática</h3>
-          <p>
-            Organiza cursos, asignaturas, temas y tareas. Las reglas definidas en un curso se heredan automáticamente en todas sus tareas.
-          </p>
-          <ul class="feature-list">
-            <li>Guardado persistente en IndexedDB local.</li>
-            <li>Copia de seguridad diaria automática en carpeta local (Chromium File System API).</li>
-            <li>Instalable como aplicación de escritorio PWA sin conexión.</li>
-          </ul>
-        </div>
-
-        <div class="bento-card span-8">
-          <div class="card-kicker">04 · MÓDULO DE BASES DE DATOS (DAM / DAW / ASIR)</div>
-          <h3>Motor SQL determinista sobre Sandbox MySQL en memoria RAM</h3>
-          <p>
-            Olvídate de corregir scripts <code>.sql</code> a ojo o arriesgar tu equipo ejecutando código de alumnos. El motor levanta un contenedor MySQL 8.4 efímero en RAM y verifica el resultado real de cada ejercicio.
-          </p>
-          <ul class="feature-list">
-            <li><strong>DDL:</strong> Compara el esquema resultante (tablas, tipos equivalentes, PK, FK, UNIQUE, CHECK) aunque varíen los nombres de restricción.</li>
-            <li><strong>SELECT y DML:</strong> Evalúa filas devueltas y cambios en tablas partiendo siempre del estado correcto del ejercicio anterior.</li>
-            <li><strong>Datos de prueba sintéticos:</strong> Genera casos límite automáticos para detectar consultas que aciertan por pura casualidad.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- CALCULADORA INTERACTIVA DE TIEMPO AHORRADO -->
-    <section id="calculadora" class="reveal">
-      <div class="section-head">
-        <span class="eyebrow">Impacto Medible</span>
-        <h2>Calcula cuántas horas recupera un departamento cada trimestre</h2>
-        <p>Mueve los deslizadores según el tamaño de tus grupos de FP para estimar el ahorro de tiempo real.</p>
-      </div>
-
-      <div class="calc-panel">
-        <div>
-          <div class="slider-group">
-            <div class="slider-label">
-              <span>Alumnos por grupo de FP</span>
-              <span class="slider-val" id="val-alumnos">28 alumnos</span>
-            </div>
-            <input type="range" id="range-alumnos" min="10" max="60" value="28" oninput="updateCalculator()">
-          </div>
-
-          <div class="slider-group">
-            <div class="slider-label">
-              <span>Prácticas de Redes / SQL al trimestre</span>
-              <span class="slider-val" id="val-practicas">6 prácticas</span>
-            </div>
-            <input type="range" id="range-practicas" min="2" max="15" value="6" oninput="updateCalculator()">
-          </div>
-
-          <div class="slider-group" style="margin-bottom:0;">
-            <div class="slider-label">
-              <span>Minutos de corrección manual por entrega</span>
-              <span class="slider-val" id="val-minutos">14 min</span>
-            </div>
-            <input type="range" id="range-minutos" min="5" max="30" value="14" oninput="updateCalculator()">
-          </div>
-        </div>
-
-        <div class="calc-results">
-          <div class="calc-box highlight">
-            <div class="calc-number" id="res-horas">27,4 horas</div>
-            <div class="calc-caption">Horas netas ahorradas cada trimestre por asignatura</div>
-          </div>
-          <div class="calc-box">
-            <div class="calc-number" id="res-entregas" style="font-size:1.75rem; color:var(--cyan);">168</div>
-            <div class="calc-caption">Memorias / scripts pre-corregidos</div>
-          </div>
-          <div class="calc-box">
-            <div class="calc-number" style="font-size:1.75rem; color:var(--amber);">0,00 €</div>
-            <div class="calc-caption">Coste en servidores o tokens de IA</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- EXPLORADOR INTERACTIVO DE ARQUITECTURA E INFRAESTRUCTURA -->
-    <section id="arquitectura" class="reveal">
-      <div class="section-head">
-        <span class="eyebrow">Diseño Técnico e Infraestructura</span>
-        <h2>Explora cada capa de la arquitectura del sistema</h2>
-        <p>Haz clic en cada componente para inspeccionar su configuración técnica, sistema operativo y medidas de seguridad.</p>
-      </div>
-
-      <div class="arch-explorer">
-        <div class="arch-nodes">
-          <div class="arch-node active" onclick="selectArchNode(0, this)">
-            <div class="arch-node-id">CAPA 01 · CLIENTE</div>
-            <div class="arch-node-title">Web Single-File PWA</div>
-            <div class="arch-node-tech">React 19 · TypeScript · Vite 8</div>
-          </div>
-          <div class="arch-node" onclick="selectArchNode(1, this)">
-            <div class="arch-node-id">CAPA 02 · VISIÓN LOCAL</div>
-            <div class="arch-node-title">Motor OCR en Worker</div>
-            <div class="arch-node-tech">Tesseract WASM SIMD · PDF.js</div>
-          </div>
-          <div class="arch-node" onclick="selectArchNode(2, this)">
-            <div class="arch-node-id">CAPA 03 · MOTOR SQL</div>
-            <div class="arch-node-title">Corrector Determinista</div>
-            <div class="arch-node-tech">Python 3.14 · uv · PyMySQL</div>
-          </div>
-          <div class="arch-node" onclick="selectArchNode(3, this)">
-            <div class="arch-node-id">CAPA 04 · AISLAMIENTO</div>
-            <div class="arch-node-title">Sandbox MySQL en RAM</div>
-            <div class="arch-node-tech">Docker · MySQL 8.4 · tmpfs</div>
-          </div>
-        </div>
-
-        <div class="arch-detail-box">
-          <div>
-            <h3 id="arch-title" style="font-family:var(--font-display); font-size:1.35rem; margin-bottom:0.6rem;">
-              Cliente Docente Single-File (Sin Servidor)
-            </h3>
-            <p id="arch-desc" style="color:var(--text-secondary); font-size:0.94rem; margin-bottom:1rem;">
-              Toda la aplicación web se compila en un único archivo autónomo (Evaluario.html) protegido con una política de seguridad de contenido (CSP) que deshabilita físicamente cualquier conexión de red desde el navegador.
-            </p>
-            <div style="display:flex; gap:0.85rem; flex-wrap:wrap;">
-              <a href="arquitectura/arquitectura.html" class="btn btn-ghost">Ver Diagramas de Infraestructura y Tabla →</a>
-              <a href="prototipos/prototipos.html" class="btn btn-ghost">Ver Prototipos de Interfaz →</a>
-            </div>
-          </div>
-          <pre class="arch-code" id="arch-code">Content-Security-Policy:
-  default-src 'none';
-  script-src 'unsafe-inline' 'wasm-unsafe-eval';
-  connect-src 'none';
-  worker-src blob: 'self';
-
-Persistencia: IndexedDB + Copia diaria JSON</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- PLANIFICACIÓN Y HOJA DE RUTA (CONECTADA CON JIRA EVA) -->
-    <section id="planificacion" class="reveal">
-      <div class="section-head">
-        <span class="eyebrow">Planificación del Proyecto (Jira EVA)</span>
-        <h2>Hoja de ruta desde el anteproyecto hasta mayo de 2027</h2>
-        <p>Seguimiento real sincronizado con el tablero Kanban del proyecto en Jira.</p>
-      </div>
-
-      <div class="timeline-grid">
-        <div class="phase-card done">
-          <div class="phase-meta"><span>SEP - NOV 2026</span><span style="color:var(--emerald);">● FINALIZADO</span></div>
-          <h4>1. Elección de idea y Anteproyecto</h4>
-          <p>Lluvia de ideas de ASIR, estudio de normativa RGPD / EU AI Act y entrega del anteproyecto técnico.</p>
-        </div>
-
-        <div class="phase-card current">
-          <div class="phase-meta"><span>NOV - 15 DIC 2026</span><span style="color:var(--cyan);">● EN CURSO</span></div>
-          <h4>2. Planificación y Organización</h4>
-          <p>Tablero Kanban en Jira (EVA), repositorio estructurado en GitHub, página de lanzamiento y esquemas técnicos.</p>
-        </div>
-
-        <div class="phase-card upcoming">
-          <div class="phase-meta"><span>DIC 2026 - ENE 2027</span><span>PENDIENTE</span></div>
-          <h4>3. Infraestructura Docker Segura</h4>
-          <p>Hardening del contenedor MySQL 8.4 con montaje volátil en RAM (tmpfs), límites de recursos y bloqueo de ficheros.</p>
-        </div>
-
-        <div class="phase-card upcoming">
-          <div class="phase-meta"><span>FEB - MAR 2027</span><span>PENDIENTE</span></div>
-          <h4>4. Motor SQL y Lector de Redes</h4>
-          <p>Separador con soporte de DELIMITER, comparadores DDL/DML/SELECT y pipeline OCR para capturas de VirtualBox.</p>
-        </div>
-
-        <div class="phase-card upcoming">
-          <div class="phase-meta"><span>MAR - ABR 2027</span><span>PENDIENTE</span></div>
-          <h4>5. Pruebas de Campo y Anti-Copia</h4>
-          <p>Validación con entregas reales anonimizadas, ajuste de rúbricas y detector de MACs/timestamps compartidos.</p>
-        </div>
-
-        <div class="phase-card upcoming">
-          <div class="phase-meta"><span>MAYO 2027</span><span>META FINAL</span></div>
-          <h4>6. Memoria Final y Lanzamiento</h4>
-          <p>Redacción de la memoria oficial del proyecto intermodular, defensa ante el tribunal y apertura comercial.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- LISTA DE ESPERA POR CORREO (LANZAMIENTO MAYO 2027) -->
-    <section id="lanzamiento" class="waitlist-section reveal">
-      <span class="eyebrow">Acceso Anticipado para Profesores y Centros</span>
-      <h2 style="font-family:var(--font-display); font-size:clamp(1.9rem, 3.8vw, 2.8rem); margin-bottom:0.75rem;">
-        Únete al lanzamiento oficial de mayo de 2027
-      </h2>
-      <p style="color:var(--text-secondary); max-width:600px; margin:0 auto;">
-        Déjanos tu correo docente para recibir acceso prioritario a la versión de lanzamiento, probar el piloto en tus módulos de Redes o Bases de Datos y recibir tu pase de reserva.
-      </p>
-
-      <form class="waitlist-form-box" onsubmit="handleWaitlistSubmit(event)">
-        <input type="email" id="waitlist-email" class="email-input" placeholder="profesor@centroeducativo.es" required>
-        <button type="submit" class="btn btn-primary btn-lg">Unirme a la lista de espera</button>
-      </form>
-
-      <div class="pass-ticket" id="pass-ticket">
-        <div style="display:flex; justify-content:space-between; border-bottom:1px dashed rgba(16, 185, 129, 0.4); padding-bottom:0.5rem; margin-bottom:0.6rem;">
-          <strong>PASE DE ACCESO ANTICIPADO · EVALUARIO 2027</strong>
-          <span id="ticket-code">EVA-2027-089</span>
-        </div>
-        <div>Correo registrado: <span id="ticket-email" style="color:#fff; font-weight:700;"></span></div>
-        <div>Estado: <strong>Reserva prioritaria confirmada para Mayo 2027</strong></div>
-        <div style="margin-top:0.45rem; font-size:0.74rem; color:#a7f3d0;">
-          También se ha preparado tu cliente de correo por si deseas enviarnos directamente los módulos que impartes.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-grid">
+    <!-- HERO EDITORIAL -->
+    <section class="hero-editorial">
       <div>
-        <div style="font-family:var(--font-display); font-weight:700; font-size:1.1rem; color:#fff; margin-bottom:0.25rem;">
-          Evaluario · Proyecto Intermodular de ASIR (2026-2027)
+        <div class="stamp-tag">✦ Para profesores de SMR · ASIR · DAW · DAM</div>
+        <h1 class="hero-title">
+          Deja de perder tus domingos leyendo capturas de pantalla <span class="hand-circle">una a una<svg viewBox="0 0 220 68" fill="none"><path d="M12 46 C 45 8, 185 6, 206 34 C 218 52, 160 64, 38 56 C 10 53, 6 32, 34 20" stroke="#E03E52" stroke-width="3.2" stroke-linecap="round"/></svg></span>
+        </h1>
+        <p class="hero-subtitle">
+          <strong>Evaluario</strong> lee las memorias en PDF y los ejercicios SQL de toda tu clase en segundos, comprueba cada requisito con tus propios criterios y te prepara la hoja de corrección lista para revisar. Todo sin que ningún dato de tus alumnos salga de tu ordenador.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#reserva" class="btn-tactile btn-coral">Solicitar acceso para mis clases →</a>
+          <a href="#pupitre" class="btn-tactile btn-paper">Probar el pupitre interactivo</a>
         </div>
-        <div style="font-size:0.84rem; color:var(--text-secondary);">
-          I.E.S. Triana (Sevilla) · Desarrollado por Sergio · Privacidad por diseño
+
+        <div class="trust-badges">
+          <span><strong>✓ Tú decides siempre la nota final</strong></span>
+          <span><strong>✓ Cumple 100% RGPD docente</strong></span>
+          <span><strong>✓ Funciona sin internet</strong></span>
         </div>
       </div>
 
-      <div class="footer-links">
-        <a href="https://github.com/Piratapacorro/evaluario-lanzamiento" id="repo-btn-footer" target="_blank" rel="noopener">Repositorio GitHub</a>
-        <a href="https://evaluario.atlassian.net" target="_blank" rel="noopener">Tablero Kanban en Jira</a>
-        <a href="arquitectura/arquitectura.html">Arquitectura e Infraestructura</a>
-        <a href="prototipos/prototipos.html">Prototipos de Interfaz</a>
+      <!-- Comparador interactivo del Domingo del Profesor -->
+      <div class="sunday-card">
+        <span class="corner-reg tl"></span>
+        <span class="corner-reg tr"></span>
+        <span class="corner-reg bl"></span>
+        <span class="corner-reg br"></span>
+        <div class="rubber-stamp" id="sunday-stamp">TARDE RECUPERADA</div>
+
+        <div class="sunday-toggle">
+          <button class="sunday-btn" id="btn-sunday-without" onclick="setSundayMode('without')">
+            Corrigiendo a mano
+          </button>
+          <button class="sunday-btn active" id="btn-sunday-with" onclick="setSundayMode('with')">
+            Con Evaluario
+          </button>
+        </div>
+
+        <div class="sunday-scene" id="sunday-content">
+          <div class="scene-time">
+            <span style="color: var(--teal);">DOMINGO · 17:20 H</span>
+            <span style="background: var(--teal-soft); color: var(--teal); padding: 0.15rem 0.5rem; border-radius: 4px;">18 MINUTOS EN TOTAL</span>
+          </div>
+          <p style="font-family: var(--font-serif); font-size: 1.22rem; font-weight: 600;">
+            30 memorias de DHCP pre-corregidas y listas para tu visto bueno
+          </p>
+          <ul class="scene-list">
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">01</span>
+              <span>Arrastras el ZIP descargado de Classroom o Moodle directamente a la hoja.</span>
+            </li>
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">02</span>
+              <span>Evaluario localiza en qué página y captura está cada IP, máscara y comando.</span>
+            </li>
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">03</span>
+              <span>Te avisa en privado si dos alumnos han entregado capturas de la misma máquina virtual.</span>
+            </li>
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">04</span>
+              <span>Revisas solo los puntos dudosos, ajustas lo que quieras y descargas el Excel de notas.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUPITRE INTERACTIVO: PRUÉBALO EN VIVO -->
+    <section class="desk-section" id="pupitre">
+      <div class="section-header">
+        <span class="section-kicker">Demostración Interactiva</span>
+        <h2>Toca las burbujas, cambia de alumno y mira cómo trabaja para ti</h2>
+        <p>Cada fila es un alumno y cada columna es un punto de tu rúbrica. Haz clic en cualquier alumno o pulsa sobre las burbujas para ver cómo tú tienes siempre la última palabra.</p>
+      </div>
+
+      <div class="omr-sheet-frame">
+        <div class="sheet-topbar">
+          <div class="mode-pills">
+            <button class="mode-pill active" id="pill-redes" onclick="switchSubject('redes')">
+              Práctica de Redes · Servidor DHCP en VirtualBox
+            </button>
+            <button class="mode-pill" id="pill-sql" onclick="switchSubject('sql')">
+              Práctica de Bases de Datos · Consultas y Tablas SQL
+            </button>
+          </div>
+
+          <button class="scan-trigger-btn" onclick="triggerOpticalScan()">
+            ▶ Pasar lector óptico a la clase
+          </button>
+        </div>
+
+        <div class="sheet-workbench">
+          <!-- Izquierda: Hoja OMR -->
+          <div class="sheet-table-pane">
+            <div class="scanner-light-bar" id="scanner-bar"></div>
+            <table class="omr-table">
+              <thead>
+                <tr id="omr-thead-row">
+                  <th>Alumno/a (Grupo 2.º)</th>
+                  <th title="Subred con el número del alumno">P1 · Subred</th>
+                  <th title="Rango de concesión DHCP">P2 · Rango</th>
+                  <th title="Puerta de enlace y máscara">P3 · Router</th>
+                  <th title="Servidor DNS configurado">P4 · DNS</th>
+                  <th title="Concesión activa en cliente">P5 · Cliente</th>
+                  <th>Propuesta</th>
+                </tr>
+              </thead>
+              <tbody id="omr-tbody">
+                <!-- Generado dinámicamente por JS -->
+              </tbody>
+            </table>
+            <div style="margin-top: 1rem; display: flex; gap: 1.25rem; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-muted);">
+              <span><strong style="color:var(--teal);">● Llena:</strong> Evidencia encontrada en captura</span>
+              <span><strong style="color:var(--amber);">◌ Punteada:</strong> Dudoso (para tu revisión)</span>
+              <span><strong style="color:var(--coral);">✕ Tachada:</strong> No aparece en la entrega</span>
+            </div>
+          </div>
+
+          <!-- Derecha: Evidencia del alumno seleccionado -->
+          <div class="sheet-inspector-pane">
+            <div>
+              <div class="inspector-top">
+                <div>
+                  <div style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-muted);" id="insp-meta">
+                    INSPECCIÓN DE ENTREGA · PÁGINA 6 DEL PDF
+                  </div>
+                  <h3 style="font-family: var(--font-serif); font-size: 1.5rem;" id="insp-name">
+                    Lucía Gómez (Alumno 07)
+                  </h3>
+                </div>
+                <div class="grade-stamp-box">
+                  <div class="grade-stamp-label">PROPUESTA</div>
+                  <div class="grade-stamp-val" id="insp-grade">8,5</div>
+                </div>
+              </div>
+
+              <div class="capture-preview" id="insp-capture">
+                <!-- Contenido de captura dinámico -->
+              </div>
+            </div>
+
+            <div class="feedback-card" id="insp-feedback">
+              <!-- Comentario autogenerado para el alumno -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUÉ CORRIGE: 3 FICHAS DE ARCHIVADOR -->
+    <section class="cards-section" id="modulos">
+      <div class="section-header">
+        <span class="section-kicker">Especializado en Informática</span>
+        <h2>Pensado para las prácticas que ninguna otra herramienta sabe evaluar</h2>
+        <p>Olvídate de plantillas genéricas. Evaluario entiende de subredes, consolas de Linux, máquinas virtuales y esquemas relacionales.</p>
+      </div>
+
+      <div class="index-cards-grid">
+        <article class="index-card">
+          <span class="card-tab-number" style="background: var(--teal-soft); color: var(--teal);">FICHA 01 · REDES Y SISTEMAS</span>
+          <h3>Memorias en PDF llenas de capturas de terminal</h3>
+          <p>
+            Aunque el alumno pegue capturas oscuras y diminutas de Ubuntu o Windows Server, el lector amplía y mejora el contraste antes de leer cada línea.
+          </p>
+          <ul class="check-bullets">
+            <li><strong>▸</strong> <span>Comprueba que cada alumno use su propio número en la IP (<code>192.168.XX.1</code>).</span></li>
+            <li><strong>▸</strong> <span>Propone la lista de puntos directamente leyendo el PDF o Word de tu enunciado.</span></li>
+            <li><strong>▸</strong> <span>Te lleva con un clic a la página exacta donde está cada captura.</span></li>
+          </ul>
+        </article>
+
+        <article class="index-card">
+          <span class="card-tab-number" style="background: var(--coral-soft); color: var(--coral);">FICHA 02 · BASES DE DATOS</span>
+          <h3>Prácticas de SQL probadas con datos reales y casos trampa</h3>
+          <p>
+            No mira el código por encima: ejecuta las tablas y consultas de cada alumno en un entorno aislado y compara los resultados con tu solución.
+          </p>
+          <ul class="check-bullets">
+            <li><strong>▸</strong> <span>Pilla las consultas mal hechas que acertaban de casualidad con pocos datos.</span></li>
+            <li><strong>▸</strong> <span>Agrupa a los alumnos que tienen el mismo fallo para que decidas el criterio una sola vez.</span></li>
+            <li><strong>▸</strong> <span>Evalúa creación de tablas (DDL), consultas (SELECT) y modificaciones (DML).</span></li>
+          </ul>
+        </article>
+
+        <article class="index-card">
+          <span class="card-tab-number" style="background: var(--amber-soft); color: #92400e;">FICHA 03 · DETECTOR DE COPIAS</span>
+          <h3>Aviso discreto cuando dos memorias comparten máquina</h3>
+          <p>
+            En vez de comparar fotos que siempre se parecen, busca en las capturas datos que nunca coinciden por azar entre dos ordenadores distintos.
+          </p>
+          <ul class="check-bullets">
+            <li><strong>▸</strong> <span>Detecta direcciones MAC idénticas o la misma hora exacta hasta el segundo.</span></li>
+            <li><strong>▸</strong> <span>Ignora lo que es normal que coincida en toda la clase (como la red NAT de VirtualBox).</span></li>
+            <li><strong>▸</strong> <span>Muestra un aviso solo para ti con un botón para comparar ambas entregas cara a cara.</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- CALCULADORA CON RECIBO DE PAPEL PERFORADO -->
+    <section class="receipt-section" id="calculadora">
+      <div class="section-header">
+        <span class="section-kicker">Calculadora Docente</span>
+        <h2>¿Cuántas tardes libres vas a recuperar este trimestre?</h2>
+        <p>Ajusta los deslizadores a la realidad de tus grupos y mira el cálculo en el recibo.</p>
+      </div>
+
+      <div class="receipt-workbench">
+        <div>
+          <div class="tactile-slider">
+            <div class="tactile-slider-head">
+              <span>Alumnos en tus grupos</span>
+              <span class="tactile-slider-val" id="lbl-alumnos">28 alumnos</span>
+            </div>
+            <input type="range" class="paper-range" id="sl-alumnos" min="10" max="90" value="28" oninput="calcReceipt()">
+          </div>
+
+          <div class="tactile-slider">
+            <div class="tactile-slider-head">
+              <span>Prácticas con memoria o SQL al trimestre</span>
+              <span class="tactile-slider-val" id="lbl-practicas">6 prácticas</span>
+            </div>
+            <input type="range" class="paper-range" id="sl-practicas" min="2" max="15" value="6" oninput="calcReceipt()">
+          </div>
+
+          <div class="tactile-slider" style="margin-bottom: 0;">
+            <div class="tactile-slider-head">
+              <span>Minutos que tardas hoy por cada entrega</span>
+              <span class="tactile-slider-val" id="lbl-minutos">15 min</span>
+            </div>
+            <input type="range" class="paper-range" id="sl-minutos" min="6" max="30" value="15" oninput="calcReceipt()">
+          </div>
+        </div>
+
+        <div class="paper-receipt">
+          <div class="receipt-header">
+            <div style="font-weight: 700; font-size: 0.95rem;">RESUMEN DE TIEMPO DOCENTE</div>
+            <div style="font-size: 0.74rem; color: var(--ink-muted);">CÁLCULO TRIMESTRAL ESTIMADO</div>
+          </div>
+
+          <div class="receipt-line">
+            <span>Entregas corregidas al trimestre:</span>
+            <strong id="rc-entregas">168 entregas</strong>
+          </div>
+          <div class="receipt-line">
+            <span>Páginas de PDF inspeccionadas:</span>
+            <strong id="rc-paginas">~3.024 págs.</strong>
+          </div>
+          <div class="receipt-line">
+            <span>Tiempo corrigiendo a mano:</span>
+            <strong id="rc-manual">42,0 horas</strong>
+          </div>
+          <div class="receipt-line">
+            <span>Tiempo revisando con Evaluario:</span>
+            <strong id="rc-eval" style="color: var(--teal);">9,5 horas</strong>
+          </div>
+
+          <div class="receipt-total">
+            <div>
+              <div style="font-weight: 700; font-size: 0.85rem;">TIEMPO AHORRADO:</div>
+              <div style="font-size: 0.72rem; color: var(--ink-muted);" id="rc-domingos">Equivale a 8 tardes libres</div>
+            </div>
+            <div class="receipt-big-num" id="rc-ahorro">32,5 h</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BILLETE DE RESERVA PRIORITARIA (MAYO 2027) -->
+    <section class="boarding-section" id="reserva">
+      <div class="boarding-pass">
+        <div class="pass-main">
+          <span class="section-kicker">Lanzamiento Oficial · Mayo 2027</span>
+          <h2 style="font-family: var(--font-serif); font-size: clamp(1.85rem, 3.4vw, 2.55rem); line-height: 1.15; margin-bottom: 0.65rem;">
+            Reserva tu invitación prioritaria como docente o centro
+          </h2>
+          <p style="color: var(--ink-body); font-size: 0.98rem;">
+            Selecciona qué asignaturas impartes y déjanos tu correo para recibir acceso directo en cuanto abramos las plazas del lanzamiento en mayo de 2027.
+          </p>
+
+          <div class="specialty-chips" id="spec-container">
+            <button type="button" class="spec-chip active" onclick="toggleSpec(this)">Redes y Servicios (ASIR / SMR)</button>
+            <button type="button" class="spec-chip" onclick="toggleSpec(this)">Bases de Datos (SQL)</button>
+            <button type="button" class="spec-chip" onclick="toggleSpec(this)">Sistemas Operativos</button>
+            <button type="button" class="spec-chip" onclick="toggleSpec(this)">Departamento de Informática completo</button>
+          </div>
+
+          <form class="form-row" onsubmit="submitTeacherWaitlist(event)">
+            <input type="email" id="teacher-email" class="paper-input" placeholder="Tu correo profesional (nombre@centro.es)" required>
+            <button type="submit" class="btn-tactile btn-coral">Reservar mi invitación</button>
+          </form>
+
+          <div class="stamped-confirmation" id="stamp-confirm">
+            <strong>✓ INVITACIÓN REGISTRADA (<span id="conf-code">EVA-2027</span>):</strong> Hemos emitido tu resguardo para <span id="conf-mail" style="text-decoration: underline;"></span> y preparado el mensaje de confirmación en tu correo.
+          </div>
+        </div>
+
+        <div class="pass-stub">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-muted); text-transform: uppercase;">
+              RESGUARDO DE INVITACIÓN
+            </div>
+            <div style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; margin: 0.35rem 0 1rem;">
+              Convocatoria Mayo 2027
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; display: grid; gap: 0.45rem; color: var(--ink-body);">
+              <div>• Prueba gratuita con tus propias prácticas</div>
+              <div>• Cero instalación en servidores del centro</div>
+              <div>• Importación directa desde Classroom y Moodle</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1.5px dashed var(--line-strong); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem;">
+            <span>SERIE DOCENTE FP</span>
+            <span style="background: var(--ink-deep); color: #fff; padding: 0.2rem 0.55rem; border-radius: 3px;">N.º 2027-FP</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="editorial-footer">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <strong style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--ink-deep);">Evaluario</strong>
+        <span>· Herramienta de pre-corrección asistida para profesorado de Formación Profesional</span>
+      </div>
+      <div style="font-family: var(--font-mono); font-size: 0.78rem;">
+        Privacidad total en el navegador del docente · Lanzamiento Mayo 2027
       </div>
     </div>
   </footer>
 
   <script>
-    // 1. Red de Nodos Interactiva en el Canvas de Fondo
-    const canvas = document.getElementById('bg-canvas');
+    // 1. Lienzo de partículas de tinta suaves sobre papel
+    const canvas = document.getElementById('ink-canvas');
     const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
-    const mouse = { x: -1000, y: -1000 };
+    let w, h;
+    const trail = [];
 
-    function resizeCanvas() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    window.addEventListener('resize', resize);
+    resize();
 
     window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      trail.push({ x: e.clientX, y: e.clientY, age: 0 });
+      if (trail.length > 28) trail.shift();
     });
 
-    class NodeParticle {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.45;
-        this.vy = (Math.random() - 0.5) * 0.45;
-        this.r = Math.random() * 1.8 + 0.8;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x < 0 || this.x > width) this.vx *= -1;
-        if (this.y < 0 || this.y > height) this.vy *= -1;
-      }
-      draw() {
+    function renderInkTrail() {
+      ctx.clearRect(0, 0, w, h);
+      if (trail.length > 2) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.55)';
-        ctx.fill();
+        ctx.moveTo(trail[0].x, trail[0].y);
+        for (let i = 1; i < trail.length; i++) {
+          ctx.lineTo(trail[i].x, trail[i].y);
+          trail[i].age += 1;
+        }
+        ctx.strokeStyle = 'rgba(224, 62, 82, 0.16)';
+        ctx.lineWidth = 2.2;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+      while (trail.length && trail[0].age > 35) trail.shift();
+      requestAnimationFrame(renderInkTrail);
+    }
+    renderInkTrail();
+
+    // 2. Comparador del Domingo del Profesor
+    function setSundayMode(mode) {
+      const btnWithout = document.getElementById('btn-sunday-without');
+      const btnWith = document.getElementById('btn-sunday-with');
+      const content = document.getElementById('sunday-content');
+      const stamp = document.getElementById('sunday-stamp');
+
+      if (mode === 'without') {
+        btnWithout.classList.add('active');
+        btnWith.classList.remove('active');
+        stamp.textContent = 'AGOTAMIENTO DOCENTE';
+        stamp.style.borderColor = '#6E7681';
+        stamp.style.color = '#6E7681';
+        content.innerHTML = `
+          <div class="scene-time">
+            <span style="color: var(--coral);">DOMINGO · 20:45 H</span>
+            <span style="background: var(--coral-soft); color: var(--coral); padding: 0.15rem 0.5rem; border-radius: 4px;">4 HORAS Y MEDIA</span>
+          </div>
+          <p style="font-family: var(--font-serif); font-size: 1.22rem; font-weight: 600;">
+            30 pestañas de PDF abiertas buscando IPs diminutas a ojo
+          </p>
+          <ul class="scene-list">
+            <li>
+              <span style="color: var(--coral); font-weight: 700;">✕</span>
+              <span>Hacer zoom al 300% en cada captura de VirtualBox para ver si puso la máscara bien.</span>
+            </li>
+            <li>
+              <span style="color: var(--coral); font-weight: 700;">✕</span>
+              <span>Quedarte con la duda de si la captura del alumno 18 es la misma que viste hace media hora.</span>
+            </li>
+            <li>
+              <span style="color: var(--coral); font-weight: 700;">✕</span>
+              <span>Copiar y pegar el mismo comentario de corrección veinte veces seguidas.</span>
+            </li>
+            <li>
+              <span style="color: var(--coral); font-weight: 700;">✕</span>
+              <span>Terminar el domingo de noche con la vista cansada y otra práctica pendiente para el lunes.</span>
+            </li>
+          </ul>`;
+      } else {
+        btnWith.classList.add('active');
+        btnWithout.classList.remove('active');
+        stamp.textContent = 'TARDE RECUPERADA';
+        stamp.style.borderColor = 'var(--coral)';
+        stamp.style.color = 'var(--coral)';
+        content.innerHTML = `
+          <div class="scene-time">
+            <span style="color: var(--teal);">DOMINGO · 17:20 H</span>
+            <span style="background: var(--teal-soft); color: var(--teal); padding: 0.15rem 0.5rem; border-radius: 4px;">18 MINUTOS EN TOTAL</span>
+          </div>
+          <p style="font-family: var(--font-serif); font-size: 1.22rem; font-weight: 600;">
+            30 memorias de DHCP pre-corregidas y listas para tu visto bueno
+          </p>
+          <ul class="scene-list">
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">01</span>
+              <span>Arrastras el ZIP descargado de Classroom o Moodle directamente a la hoja.</span>
+            </li>
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">02</span>
+              <span>Evaluario localiza en qué página y captura está cada IP, máscara y comando.</span>
+            </li>
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">03</span>
+              <span>Te avisa en privado si dos alumnos han entregado capturas de la misma máquina virtual.</span>
+            </li>
+            <li>
+              <span style="color: var(--teal); font-weight: 700;">04</span>
+              <span>Revisas solo los puntos dudosos, ajustas lo que quieras y descargas el Excel de notas.</span>
+            </li>
+          </ul>`;
       }
     }
 
-    const count = Math.min(65, Math.floor((window.innerWidth * window.innerHeight) / 22000));
-    for (let i = 0; i < count; i++) particles.push(new NodeParticle());
-
-    function animateCanvas() {
-      ctx.clearRect(0, 0, width, height);
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.update();
-        p.draw();
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 135) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(6, 182, 212, ${(1 - dist / 135) * 0.16})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
+    // 3. Pupitre Interactivo (Datos de alumnos y burbujas)
+    const datasets = {
+      redes: {
+        headers: ['Alumno/a (Grupo 2.º)', 'P1 · Subred', 'P2 · Rango', 'P3 · Router', 'P4 · DNS', 'P5 · Cliente', 'Propuesta'],
+        students: [
+          {
+            name: 'Lucía Gómez (07)',
+            copyWarning: false,
+            page: 'PÁGINA 6 DEL PDF',
+            bubbles: ['ok', 'ok', 'ok', 'doubt', 'ok'],
+            capture: `<span class="capture-tag">CAPTURA LEÍDA · PÁG. 6 · /etc/dhcp/dhcpd.conf</span>
+<div>subnet <span class="ink-highlight">192.168.107.0</span> netmask <span class="ink-highlight">255.255.255.0</span> {</div>
+<div>&nbsp;&nbsp;range <span class="ink-highlight">192.168.107.50 192.168.107.150</span>;</div>
+<div>&nbsp;&nbsp;option routers <span class="ink-highlight">192.168.107.1</span>;</div>
+<div>&nbsp;&nbsp;option domain-name-servers <span class="ink-amber">8.8.4.4</span>;</div>
+<div>}</div>`,
+            feedback: '<strong>Comentario listo para copiar:</strong> Subred 192.168.107.0/24, rango .50-.150 y concesión en cliente correctos. Revisar P4 (se configuró DNS externo 8.8.4.4 en lugar del DNS del aula).'
+          },
+          {
+            name: 'Carlos Ruiz (12)',
+            copyWarning: true,
+            page: 'PÁGINA 9 DEL PDF · AVISO DE COINCIDENCIA',
+            bubbles: ['ok', 'ok', 'ok', 'ok', 'ok'],
+            capture: `<span class="capture-tag" style="background:var(--amber);">INDICIO SOLO PARA TI · COMPARACIÓN CON ALUMNO 19</span>
+<div>link/ether <span class="ink-amber">08:00:27:c4:91:e2</span> brd ff:ff:ff:ff:ff:ff</div>
+<div>inet <span class="ink-highlight">192.168.112.50/24</span> scope global dynamic</div>
+<div>valid_lft 3541sec · Hora en barra: <span class="ink-amber">18:42:53</span></div>`,
+            feedback: '<strong>Aviso privado para el docente:</strong> Comparte dirección MAC exacta (08:00:27:c4:91:e2) y marca de tiempo (18:42:53) únicamente con la entrega de Marcos Vega (19).'
+          },
+          {
+            name: 'Elena Martín (15)',
+            copyWarning: false,
+            page: 'PÁGINA 4 DEL PDF',
+            bubbles: ['ok', 'miss', 'ok', 'ok', 'miss'],
+            capture: `<span class="capture-tag" style="background:var(--coral);">CAPTURA LEÍDA · PÁG. 4 · RANGO INCOMPLETO</span>
+<div>subnet <span class="ink-highlight">192.168.115.0</span> netmask 255.255.255.0 {</div>
+<div>&nbsp;&nbsp;range <span class="ink-amber">192.168.115.10 192.168.115.20</span>; # Pedía .50 a .150</div>
+<div>&nbsp;&nbsp;option routers <span class="ink-highlight">192.168.115.1</span>;</div>
+<div>}</div>`,
+            feedback: '<strong>Comentario listo para copiar:</strong> Subred y puerta de enlace correctas. El rango configurado (.10 a .20) no coincide con el enunciado (.50 a .150) y falta la captura del cliente.'
+          },
+          {
+            name: 'Marcos Vega (19)',
+            copyWarning: true,
+            page: 'PÁGINA 11 DEL PDF · AVISO DE COINCIDENCIA',
+            bubbles: ['ok', 'ok', 'ok', 'ok', 'doubt'],
+            capture: `<span class="capture-tag" style="background:var(--amber);">INDICIO SOLO PARA TI · COMPARACIÓN CON ALUMNO 12</span>
+<div>link/ether <span class="ink-amber">08:00:27:c4:91:e2</span> brd ff:ff:ff:ff:ff:ff</div>
+<div>Hora del sistema en captura: <span class="ink-amber">18:42:53</span></div>`,
+            feedback: '<strong>Aviso privado para el docente:</strong> La captura del cliente en la página 11 muestra la misma dirección física MAC que la entrega de Carlos Ruiz (12).'
           }
-        }
-        const mdx = p.x - mouse.x;
-        const mdy = p.y - mouse.y;
-        const mdist = Math.hypot(mdx, mdy);
-        if (mdist < 180) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(16, 185, 129, ${(1 - mdist / 180) * 0.35})`;
-          ctx.lineWidth = 1.2;
-          ctx.stroke();
-        }
+        ]
+      },
+      sql: {
+        headers: ['Alumno/a (1.º BBDD)', 'Ej.1 · Tablas DDL', 'Ej.2 · Claves FK', 'Ej.3 · SELECT JOIN', 'Ej.4 · Datos Límite', 'Ej.5 · UPDATE', 'Propuesta'],
+        students: [
+          {
+            name: 'Pablo Serrano (03)',
+            copyWarning: false,
+            page: 'EJECUCIÓN EN SANDBOX · Alumno03.sql',
+            bubbles: ['ok', 'ok', 'ok', 'doubt', 'ok'],
+            capture: `<span class="capture-tag">RESULTADO EN MYSQL 8.4 · EJERCICIO 4</span>
+<div>SELECT nombre, precio FROM productos WHERE <span class="ink-amber">precio &gt; 100</span>;</div>
+<div style="color:#94a3b8; margin-top:4px;">• Con los datos básicos del enunciado devuelve las 3 filas esperadas.</div>
+<div style="color:#fde68a;">• Al probar con fila límite (precio = 100 €) falla porque el enunciado pedía &gt;= 100.</div>`,
+            feedback: '<strong>Comentario listo para copiar:</strong> Estructura de tablas, claves foráneas y actualización correctas. En el ejercicio 4 usaste > 100 en lugar de >= 100.'
+          },
+          {
+            name: 'Sara Molina (08)',
+            copyWarning: false,
+            page: 'EJECUCIÓN EN SANDBOX · Alumno08.sql',
+            bubbles: ['ok', 'ok', 'ok', 'ok', 'ok'],
+            capture: `<span class="capture-tag">RESULTADO EN MYSQL 8.4 · TODOS LOS CASOS SUPERADOS</span>
+<div>SELECT p.nombre, f.nombre FROM productos p</div>
+<div>JOIN fabricantes f ON p.id_fabricante = f.id</div>
+<div>WHERE <span class="ink-highlight">p.precio &gt;= 100 ORDER BY p.precio DESC</span>;</div>`,
+            feedback: '<strong>Comentario listo para copiar:</strong> Práctica impecable. Supera tanto el juego de datos del enunciado como todas las pruebas de valores límite.'
+          },
+          {
+            name: 'David Castro (14)',
+            copyWarning: false,
+            page: 'AGRUPACIÓN DE CRITERIO · 6 ALUMNOS IGUALES',
+            bubbles: ['ok', 'ok', 'doubt', 'ok', 'miss'],
+            capture: `<span class="capture-tag" style="background:var(--amber);">AGRUPADO · FALTA CLÁUSULA ORDER BY</span>
+<div>SELECT nombre, salario FROM empleados WHERE depto = 20;</div>
+<div style="color:#fde68a; margin-top:4px;">• Devuelve las filas correctas pero sin ordenar por salario.</div>
+<div style="color:#94a3b8;">• Calibrado junto a otros 5 compañeros con el mismo caso.</div>`,
+            feedback: '<strong>Comentario listo para copiar:</strong> Tablas y filtros correctos. En el ejercicio 3 faltó ordenar el resultado con ORDER BY; en el ejercicio 5 el UPDATE modificó filas de más por omitir el WHERE.'
+          }
+        ]
       }
-      requestAnimationFrame(animateCanvas);
-    }
-    animateCanvas();
+    };
 
-    // 2. Efecto Spotlight en Tarjetas Bento
-    document.querySelectorAll('.bento-card').forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    let currentSubject = 'redes';
+    let selectedStudentIdx = 0;
+
+    function renderSheet() {
+      const data = datasets[currentSubject];
+      const thead = document.getElementById('omr-thead-row');
+      thead.innerHTML = data.headers.map(h => `<th>${h}</th>`).join('');
+
+      const tbody = document.getElementById('omr-tbody');
+      tbody.innerHTML = '';
+
+      data.students.forEach((st, sIdx) => {
+        const score = calcStudentScore(st.bubbles);
+        const tr = document.createElement('tr');
+        tr.className = 'student-row' + (sIdx === selectedStudentIdx ? ' selected' : '');
+        tr.onclick = () => {
+          selectedStudentIdx = sIdx;
+          renderSheet();
+        };
+
+        let cellsHtml = `<td>
+          <span class="sync-mark"></span>
+          <span>${st.name}</span>
+          ${st.copyWarning ? '<span class="copy-pill" title="Indicio de coincidencia con otro alumno">⚠ Coincidencia</span>' : ''}
+        </td>`;
+
+        st.bubbles.forEach((bState, bIdx) => {
+          const symbol = bState === 'ok' ? '✓' : (bState === 'doubt' ? '?' : '✕');
+          cellsHtml += `<td>
+            <span class="omr-bubble ${bState}" onclick="event.stopPropagation(); cycleBubble(${sIdx}, ${bIdx})">${symbol}</span>
+          </td>`;
+        });
+
+        cellsHtml += `<td style="font-weight:700; color:var(--ink-deep);">${score}</td>`;
+        tr.innerHTML = cellsHtml;
+        tbody.appendChild(tr);
       });
-    });
 
-    // 3. Conmutador del Simulador en Vivo (Workbench)
-    function switchWorkbench(index) {
-      for (let i = 0; i < 3; i++) {
-        document.getElementById(`wb-panel-${i}`).classList.toggle('active', i === index);
-        document.getElementById(`tab-btn-${i}`).classList.toggle('active', i === index);
-      }
-      const statuses = [
-        '● Escáner WASM listo · 0 conexiones externas',
-        '● Contenedor MySQL 8.4 en RAM (127.0.0.1:3307)',
-        '● Detector heurístico de MACs y timestamps activo'
-      ];
-      document.getElementById('wb-status-text').textContent = statuses[index];
+      updateInspector();
     }
 
-    // Escenarios de DHCP interactivos
-    function loadDhcpScenario(type, btn) {
-      btn.parentElement.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const term = document.getElementById('dhcp-term-content');
-      const score = document.getElementById('dhcp-score');
-      if (type === 'ok') {
-        score.textContent = '8,5 / 10';
-        score.style.color = 'var(--emerald)';
-        term.innerHTML = `
-          <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
-          <div>default-lease-time <span class="hl-match">3600</span>; max-lease-time 7200;</div>
-          <div>subnet <span class="hl-match">192.168.107.0</span> netmask <span class="hl-match">255.255.255.0</span> {</div>
-          <div>&nbsp;&nbsp;range <span class="hl-match">192.168.107.50 192.168.107.150</span>;</div>
-          <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.107.1</span>;</div>
-          <div>&nbsp;&nbsp;option domain-name-servers <span class="hl-warn">8.8.4.4</span>;</div>
-          <div>}</div>
-          <div style="margin-top:0.45rem;">root@cliente-vb:~# <span style="color:#38bdf8;">ip -4 a show enp0s8</span></div>
-          <div>inet <span class="hl-match">192.168.107.51/24</span> brd 192.168.107.255 scope global dynamic</div>`;
-      } else if (type === 'duda') {
-        score.textContent = '6,0 + rev';
-        score.style.color = 'var(--amber)';
-        term.innerHTML = `
-          <div style="color:#fbbf24;">[PREPROCESADO OCR] Captura pequeña detectada (altura de línea 11px -> escalada a 30px)</div>
-          <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
-          <div>subnet <span class="hl-match">192.168.107.0</span> netmask 255.255.255.0 {</div>
-          <div>&nbsp;&nbsp;range <span class="hl-warn">192.168.107.5O 192.168.107.15O</span>; <span style="color:#fbbf24;">(Baja confianza OCR: marcado 'Por revisar')</span></div>
-          <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.107.1</span>;</div>
-          <div>}</div>
-          <div style="color:#94a3b8; margin-top:0.35rem;">Regla Evaluario: Lo dudoso nunca resta en silencio; se marca en ámbar para el profesor.</div>`;
-      } else {
-        score.textContent = '4,5 / 10';
-        score.style.color = 'var(--rose)';
-        term.innerHTML = `
-          <div>root@srv-debian:~# <span style="color:#38bdf8;">cat /etc/dhcp/dhcpd.conf</span></div>
-          <div>subnet <span class="hl-warn">192.168.1.0</span> netmask 255.255.255.0 { <span style="color:#f43f5e;">(No usa el número de alumno 107)</span></div>
-          <div>&nbsp;&nbsp;range <span class="hl-warn">192.168.1.10 192.168.1.20</span>;</div>
-          <div>&nbsp;&nbsp;option routers <span class="hl-match">192.168.1.1</span>;</div>
-          <div>}</div>
-          <div style="color:#f43f5e; margin-top:0.35rem;">[DETECCIÓN] La subred configurada no corresponde al esquema individual del alumno.</div>`;
-      }
-    }
-
-    // Interacción al pulsar filas de burbujas
-    function toggleCheckRow(row) {
-      const bubble = row.querySelector('.state-bubble');
-      if (bubble.classList.contains('ok')) {
-        bubble.className = 'state-bubble review';
-        bubble.textContent = '?';
-      } else if (bubble.classList.contains('review')) {
-        bubble.className = 'state-bubble miss';
-        bubble.textContent = '✕';
-      } else {
-        bubble.className = 'state-bubble ok';
-        bubble.textContent = '✓';
-      }
-      recalcDhcpScore();
-    }
-
-    function recalcDhcpScore() {
-      const weights = [2.5, 2.5, 2.0, 1.5, 1.5];
-      const rows = document.querySelectorAll('#dhcp-checks-container .check-row');
-      let sum = 0;
-      let pending = 0;
-      rows.forEach((r, idx) => {
-        const b = r.querySelector('.state-bubble');
-        if (b.classList.contains('ok')) sum += weights[idx];
-        if (b.classList.contains('review')) pending += weights[idx];
+    function calcStudentScore(bubbles) {
+      let pts = 0;
+      bubbles.forEach(b => {
+        if (b === 'ok') pts += 2.0;
+        else if (b === 'doubt') pts += 0.5;
       });
-      const badge = document.getElementById('dhcp-score');
-      badge.textContent = pending > 0
-        ? `${sum.toFixed(1).replace('.', ',')} (+${pending.toFixed(1).replace('.', ',')})`
-        : `${sum.toFixed(1).replace('.', ',')} / 10`;
+      return pts.toFixed(1).replace('.', ',');
     }
 
-    // Escenarios de SQL interactivos
-    function loadSqlScenario(type, btn) {
-      btn.parentElement.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const term = document.getElementById('sql-term-content');
-      if (type === 'casualidad') {
-        term.innerHTML = `
-          <div style="color:#94a3b8;">-- Entrega: Alumno14.sql · Ejercicio 3 (SELECT)</div>
-          <div><span style="color:#38bdf8;">SELECT</span> p.nombre, p.precio <span style="color:#38bdf8;">FROM</span> productos p <span style="color:#38bdf8;">WHERE</span> p.precio <span class="hl-warn">&gt; 100</span>;</div>
-          <div style="margin-top:0.5rem; color:#34d399;">[MOTOR] Con datos.sql básicos: devuelve las mismas 3 filas que la solución.</div>
-          <div style="color:#fbbf24;">[DATOS_EXTRA] Insertando producto en la frontera (precio = 100.00 €)...</div>
-          <div style="color:#f43f5e;">[CAZADO] La solución devuelve 4 filas y el alumno 3. Marcado como 'datos.casualidad'.</div>`;
-      } else if (type === 'sinorden') {
-        term.innerHTML = `
-          <div style="color:#94a3b8;">-- Agrupación automática de fallos idénticos (8 alumnos)</div>
-          <div><span style="color:#38bdf8;">SELECT</span> nombre, salario <span style="color:#38bdf8;">FROM</span> empleados <span style="color:#38bdf8;">WHERE</span> depto = 10;</div>
-          <div style="margin-top:0.5rem; color:#34d399;">[CONJUNTO] Las filas coinciden al 100% con la solución del profesor.</div>
-          <div style="color:#fbbf24;">[ORDEN] Falta ORDER BY salario DESC exigido en la solución.</div>
-          <div style="color:#38bdf8;">[AGRUPACIÓN] Alumnos 02, 05, 09, 11, 15, 18, 21 y 24 agrupados en 1 sola pregunta.</div>`;
-      } else {
-        term.innerHTML = `
-          <div style="color:#94a3b8;">-- Prueba de seguridad ante entrega maliciosa</div>
-          <div><span style="color:#f43f5e;">SELECT</span> * <span style="color:#f43f5e;">INTO OUTFILE</span> '/etc/passwd' <span style="color:#f43f5e;">FROM</span> usuarios;</div>
-          <div style="margin-top:0.5rem; color:#34d399;">[SANDBOX] Error 1290 (HY000): The MySQL server is running with --secure-file-priv=NULL</div>
-          <div style="color:#34d399;">[AISLAMIENTO] Red confinada a 127.0.0.1:3307 y sistema de archivos en RAM intacto.</div>`;
-      }
+    function cycleBubble(sIdx, bIdx) {
+      const order = ['ok', 'doubt', 'miss'];
+      const cur = datasets[currentSubject].students[sIdx].bubbles[bIdx];
+      const next = order[(order.indexOf(cur) + 1) % order.length];
+      datasets[currentSubject].students[sIdx].bubbles[bIdx] = next;
+      selectedStudentIdx = sIdx;
+      renderSheet();
     }
 
-    // 4. Calculadora de Ahorro Docente
-    function updateCalculator() {
-      const alumnos = parseInt(document.getElementById('range-alumnos').value, 10);
-      const practicas = parseInt(document.getElementById('range-practicas').value, 10);
-      const minutos = parseInt(document.getElementById('range-minutos').value, 10);
+    function updateInspector() {
+      const st = datasets[currentSubject].students[selectedStudentIdx];
+      document.getElementById('insp-meta').textContent = st.page;
+      document.getElementById('insp-name').textContent = st.name;
+      document.getElementById('insp-grade').textContent = calcStudentScore(st.bubbles);
+      document.getElementById('insp-capture').innerHTML = st.capture;
+      document.getElementById('insp-feedback').innerHTML = st.feedback;
+    }
 
-      document.getElementById('val-alumnos').textContent = `${alumnos} alumnos`;
-      document.getElementById('val-practicas').textContent = `${practicas} prácticas`;
-      document.getElementById('val-minutos').textContent = `${minutos} min`;
+    function switchSubject(subj) {
+      currentSubject = subj;
+      selectedStudentIdx = 0;
+      document.getElementById('pill-redes').classList.toggle('active', subj === 'redes');
+      document.getElementById('pill-sql').classList.toggle('active', subj === 'sql');
+      renderSheet();
+      triggerOpticalScan();
+    }
+
+    function triggerOpticalScan() {
+      const bar = document.getElementById('scanner-bar');
+      const rows = document.querySelectorAll('#omr-tbody .student-row');
+      if (!rows.length) return;
+      bar.style.opacity = '1';
+      rows.forEach((row, idx) => {
+        setTimeout(() => {
+          bar.style.top = (row.offsetTop) + 'px';
+          selectedStudentIdx = idx;
+          renderSheet();
+          if (idx === rows.length - 1) {
+            setTimeout(() => { bar.style.opacity = '0'; }, 420);
+          }
+        }, idx * 360);
+      });
+    }
+
+    renderSheet();
+
+    // 4. Calculadora del Recibo de Tiempo Docente
+    function calcReceipt() {
+      const alumnos = parseInt(document.getElementById('sl-alumnos').value, 10);
+      const practicas = parseInt(document.getElementById('sl-practicas').value, 10);
+      const minutos = parseInt(document.getElementById('sl-minutos').value, 10);
+
+      document.getElementById('lbl-alumnos').textContent = `${alumnos} alumnos`;
+      document.getElementById('lbl-practicas').textContent = `${practicas} prácticas`;
+      document.getElementById('lbl-minutos').textContent = `${minutos} min`;
 
       const entregas = alumnos * practicas;
+      const paginas = entregas * 18;
       const horasManual = (entregas * minutos) / 60;
-      const horasAhorradas = horasManual * 0.72;
+      const horasEval = horasManual * 0.22;
+      const ahorro = horasManual - horasEval;
+      const tardes = Math.max(1, Math.round(ahorro / 4));
 
-      document.getElementById('res-entregas').textContent = entregas;
-      document.getElementById('res-horas').textContent = `${horasAhorradas.toFixed(1).replace('.', ',')} horas`;
+      document.getElementById('rc-entregas').textContent = `${entregas} entregas`;
+      document.getElementById('rc-paginas').textContent = `~${paginas.toLocaleString('es-ES')} págs.`;
+      document.getElementById('rc-manual').textContent = `${horasManual.toFixed(1).replace('.', ',')} horas`;
+      document.getElementById('rc-eval').textContent = `${horasEval.toFixed(1).replace('.', ',')} horas`;
+      document.getElementById('rc-ahorro').textContent = `${ahorro.toFixed(1).replace('.', ',')} h`;
+      document.getElementById('rc-domingos').textContent = `Equivale a ${tardes} tardes de domingo libres`;
+    }
+    calcReceipt();
+
+    // 5. Selector de especialidades y envío de lista de espera
+    function toggleSpec(btn) {
+      btn.classList.toggle('active');
     }
 
-    // 5. Explorador de Arquitectura
-    const archData = [
-      {
-        title: 'Cliente Docente Single-File (Sin Servidor)',
-        desc: 'Toda la aplicación web se compila en un único archivo autónomo (Evaluario.html) protegido con una política de seguridad de contenido (CSP) que deshabilita físicamente cualquier conexión de red desde el navegador.',
-        code: `Content-Security-Policy:\n  default-src 'none';\n  script-src 'unsafe-inline' 'wasm-unsafe-eval';\n  connect-src 'none';\n  worker-src blob: 'self';\n\nPersistencia: IndexedDB + Copia diaria JSON`
-      },
-      {
-        title: 'Motor de Visión y OCR en WebAssembly',
-        desc: 'Extrae el texto de los PDF y pasa las capturas de pantalla por un preprocesador Canvas que toma el canal más fuerte en fondos oscuros y escala la letra pequeña hasta 30 píxeles por línea antes de ejecutar Tesseract en un Web Worker.',
-        code: `// Preprocesado antes de Tesseract WASM\nconst { gris } = aGrises(imageData.data);\nconst escala = escalaParaOcr(pasoDeLineas(gris), ancho, alto);\n// Precisión medida en capturas de terminal: 93% vs 68%`
-      },
-      {
-        title: 'Corrector Determinista SQL en Python',
-        desc: 'CLI gestionado con uv que separa sentencias respetando bloques DELIMITER, ejecuta contra el sandbox, inyecta datos de frontera y genera el informe Markdown, el CSV para Excel y el JSON de calibración.',
-        code: `$ uv run corrector comprobar\n«Sandbox MySQL 8.4 disponible en 127.0.0.1:3307»\n$ uv run corrector corregir ./practica-01\n✓ 96 pruebas en Pytest superadas`
-      },
-      {
-        title: 'Sandbox Docker MySQL 8.4 Blindado en RAM',
-        desc: 'Contenedor efímero cuyos datos viven exclusivamente en memoria RAM (tmpfs). Impide lectura o escritura en disco, desactiva tareas programadas y corta consultas lentas a los 5 segundos.',
-        code: `tmpfs:\n  - /var/lib/mysql:size=768m\ncommand:\n  - --secure-file-priv=NULL\n  - --local-infile=0\n  - --max-execution-time=5000`
-      }
-    ];
-
-    function selectArchNode(index, el) {
-      document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
-      document.getElementById('arch-title').textContent = archData[index].title;
-      document.getElementById('arch-desc').textContent = archData[index].desc;
-      document.getElementById('arch-code').textContent = archData[index].code;
-    }
-
-    // 6. Formulario de Lista de Espera para Mayo 2027
-    function handleWaitlistSubmit(e) {
+    function submitTeacherWaitlist(e) {
       e.preventDefault();
-      const email = document.getElementById('waitlist-email').value.trim();
+      const email = document.getElementById('teacher-email').value.trim();
       if (!email) return;
-      const code = 'EVA-2027-' + Math.floor(100 + Math.random() * 900);
-      document.getElementById('ticket-code').textContent = code;
-      document.getElementById('ticket-email').textContent = email;
-      const ticket = document.getElementById('pass-ticket');
-      ticket.style.display = 'block';
-      ticket.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-      const subject = encodeURIComponent(`Reserva Lista de Espera Evaluario (Mayo 2027) · ${code}`);
+      const selectedSpecs = Array.from(document.querySelectorAll('#spec-container .spec-chip.active'))
+        .map(b => b.textContent.trim());
+      const specsText = selectedSpecs.length ? selectedSpecs.join(', ') : 'Informática FP';
+      const code = 'EVA-2027-' + Math.floor(100 + Math.random() * 900);
+
+      document.getElementById('conf-code').textContent = code;
+      document.getElementById('conf-mail').textContent = email;
+      const box = document.getElementById('stamp-confirm');
+      box.style.display = 'block';
+
+      const subject = encodeURIComponent(`Reserva Invitación Docente Evaluario (Mayo 2027) · ${code}`);
       const body = encodeURIComponent(
-        `Hola Sergio,\n\nQuiero unirme a la lista de espera para el lanzamiento de Evaluario en mayo de 2027.\n\nCorreo docente: ${email}\nCódigo de reserva: ${code}\nCiclo / Módulos de interés: (Redes / Bases de Datos)\n`
+        `Hola,\n\nMe gustaría reservar acceso prioritario al lanzamiento de Evaluario en mayo de 2027.\n\nCorreo docente: ${email}\nAsignaturas / Módulos: ${specsText}\nCódigo de invitación: ${code}\n`
       );
       setTimeout(() => {
         window.location.href = `mailto:sergirrogar@gmail.com?subject=${subject}&body=${body}`;
-      }, 600);
+      }, 500);
     }
-
-    // 7. Aparición suave al hacer scroll
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
